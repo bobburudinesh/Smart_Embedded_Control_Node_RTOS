@@ -26,9 +26,9 @@ int main(void) {
 	debug_uart_init();
 	led_task_init();
 
-//	 DWT_CTRL |= (1<<0);
-//	 SEGGER_UART_init(200000);
-//	 SEGGER_SYSVIEW_Conf();
+	 DWT_CTRL |= (1<<0);
+	 SEGGER_UART_init(200000);
+	 SEGGER_SYSVIEW_Conf();
 	 vTaskStartScheduler();
 
 
