@@ -5,38 +5,41 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Core/Src/it_SECN.c \
-../Core/Src/main_SECN.c \
-../Core/Src/msp_SECN.c \
-../Core/Src/syscalls.c \
-../Core/Src/sysmem.c \
-../Core/Src/system_stm32f4xx.c 
+../FreeRTOS/croutine.c \
+../FreeRTOS/event_groups.c \
+../FreeRTOS/list.c \
+../FreeRTOS/queue.c \
+../FreeRTOS/stream_buffer.c \
+../FreeRTOS/tasks.c \
+../FreeRTOS/timers.c 
 
 OBJS += \
-./Core/Src/it_SECN.o \
-./Core/Src/main_SECN.o \
-./Core/Src/msp_SECN.o \
-./Core/Src/syscalls.o \
-./Core/Src/sysmem.o \
-./Core/Src/system_stm32f4xx.o 
+./FreeRTOS/croutine.o \
+./FreeRTOS/event_groups.o \
+./FreeRTOS/list.o \
+./FreeRTOS/queue.o \
+./FreeRTOS/stream_buffer.o \
+./FreeRTOS/tasks.o \
+./FreeRTOS/timers.o 
 
 C_DEPS += \
-./Core/Src/it_SECN.d \
-./Core/Src/main_SECN.d \
-./Core/Src/msp_SECN.d \
-./Core/Src/syscalls.d \
-./Core/Src/sysmem.d \
-./Core/Src/system_stm32f4xx.d 
+./FreeRTOS/croutine.d \
+./FreeRTOS/event_groups.d \
+./FreeRTOS/list.d \
+./FreeRTOS/queue.d \
+./FreeRTOS/stream_buffer.d \
+./FreeRTOS/tasks.d \
+./FreeRTOS/timers.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Core/Src/%.o Core/Src/%.su Core/Src/%.cyclo: ../Core/Src/%.c Core/Src/subdir.mk
+FreeRTOS/%.o FreeRTOS/%.su FreeRTOS/%.cyclo: ../FreeRTOS/%.c FreeRTOS/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/Utils/Inc" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/Tasks/Inc" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/FreeRTOS/portable/GCC/ARM_CM4F" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/SEGGER/Config" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/SEGGER/OS" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/SEGGER/SEGGER" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/FreeRTOS" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/FreeRTOS/include" -I"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/FreeRTOS/portable/GCC" -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
-clean: clean-Core-2f-Src
+clean: clean-FreeRTOS
 
-clean-Core-2f-Src:
-	-$(RM) ./Core/Src/it_SECN.cyclo ./Core/Src/it_SECN.d ./Core/Src/it_SECN.o ./Core/Src/it_SECN.su ./Core/Src/main_SECN.cyclo ./Core/Src/main_SECN.d ./Core/Src/main_SECN.o ./Core/Src/main_SECN.su ./Core/Src/msp_SECN.cyclo ./Core/Src/msp_SECN.d ./Core/Src/msp_SECN.o ./Core/Src/msp_SECN.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f4xx.cyclo ./Core/Src/system_stm32f4xx.d ./Core/Src/system_stm32f4xx.o ./Core/Src/system_stm32f4xx.su
+clean-FreeRTOS:
+	-$(RM) ./FreeRTOS/croutine.cyclo ./FreeRTOS/croutine.d ./FreeRTOS/croutine.o ./FreeRTOS/croutine.su ./FreeRTOS/event_groups.cyclo ./FreeRTOS/event_groups.d ./FreeRTOS/event_groups.o ./FreeRTOS/event_groups.su ./FreeRTOS/list.cyclo ./FreeRTOS/list.d ./FreeRTOS/list.o ./FreeRTOS/list.su ./FreeRTOS/queue.cyclo ./FreeRTOS/queue.d ./FreeRTOS/queue.o ./FreeRTOS/queue.su ./FreeRTOS/stream_buffer.cyclo ./FreeRTOS/stream_buffer.d ./FreeRTOS/stream_buffer.o ./FreeRTOS/stream_buffer.su ./FreeRTOS/tasks.cyclo ./FreeRTOS/tasks.d ./FreeRTOS/tasks.o ./FreeRTOS/tasks.su ./FreeRTOS/timers.cyclo ./FreeRTOS/timers.d ./FreeRTOS/timers.o ./FreeRTOS/timers.su
 
-.PHONY: clean-Core-2f-Src
+.PHONY: clean-FreeRTOS
 
