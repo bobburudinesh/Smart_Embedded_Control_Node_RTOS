@@ -25,4 +25,14 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
+FreeRTOS \
+FreeRTOS/portable/GCC/ARM_CM4F \
+FreeRTOS/portable/MemMang \
+SEGGER/Config \
+SEGGER/OS \
+SEGGER/Rec \
+SEGGER/SEGGER \
+SEGGER/SEGGER/Syscalls \
+Tasks/Src \
+Utils/Src \
 
