@@ -42,5 +42,6 @@
 "./SEGGER/SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.o"
 "./Tasks/Src/button_task.o"
 "./Tasks/Src/led_task.o"
+"./Tasks/Src/sensor_task.o"
 "./Utils/Src/debug_uart.o"
 "./Utils/Src/error_handler.o"

@@ -28,12 +28,13 @@ int main(void) {
 	HAL_Init();
 	SystemClock_Config();
 	debug_uart_init();
+	DWT_CTRL |= (1<<0);
+	SEGGER_UART_init(9600);
+	SEGGER_SYSVIEW_Conf();
 	app_resources_init();
 	led_task_init();
 	button_task_init();
-	DWT_CTRL |= (1<<0);
-	SEGGER_UART_init(200000);
-	SEGGER_SYSVIEW_Conf();
+	sensor_task_init();
 	vTaskStartScheduler();
 
 

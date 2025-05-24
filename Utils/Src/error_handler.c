@@ -20,5 +20,6 @@ void Error_Handler_RTOS(const char *file, int line, const char *message) {
 
 void Error_Handler_System(const char *file, int line, const char *message) {
 	print_debug_msg("%s : Assertion failed in %s, line %d: %s\n", file, file, line, message);
+	taskDISABLE_INTERRUPTS();
 	for (;;);
 }

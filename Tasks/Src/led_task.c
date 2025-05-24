@@ -8,6 +8,7 @@
 
 #include "main_SECN.h"
 #include "led_task.h"
+#include "app_resources.h"
 
 static void GPIO_Init_Led_Task(void);
 
@@ -19,26 +20,30 @@ static BaseType_t status;
 // This creates LED_TASKS for Green and Orange LED's
 void led_task_init(void) {
 	GPIO_Init_Led_Task();
-	status = xTaskCreate(v_led_task_green, "LED_GREEN", 100, NULL, 1, &led_task_green_handle);
+	status = xTaskCreate(v_led_task_green, "LED_GREEN", TASK_STACK_SIZE, NULL, 1, &led_task_green_handle);
 	configASSERT_RTOS(status == pdPASS, "Led Green Task Create");
 
-	status = xTaskCreate(v_led_task_orange, "LED_ORANGE", 100, NULL, 1, &led_task_orange_handle);
+	status = xTaskCreate(v_led_task_orange, "LED_ORANGE", TASK_STACK_SIZE, NULL, 1, &led_task_orange_handle);
 	configASSERT_RTOS(status == pdPASS, "Led Green Task Create");
 }
 
 //This function is task handler for Green LED
 void v_led_task_green(void *pvParameters) {
+	uint8_t	data = 0;
 	while(1) {
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		if(xQueueReceive(xSensor_Queue, (void*)&data, portMAX_DELAY)) {
+			data = data % 2;
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, data);
+		}
+
 	}
 }
 
 //This function is task handler for Orange LED
 void v_led_task_orange(void *pvParameters)	 {
 	while(1) {
+		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-		vTaskDelay(pdMS_TO_TICKS(100));
 	}
 }
 
