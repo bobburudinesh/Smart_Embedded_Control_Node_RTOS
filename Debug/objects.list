@@ -1,3 +1,4 @@
+"./Core/Src/app_resources.o"
 "./Core/Src/it_SECN.o"
 "./Core/Src/main_SECN.o"
 "./Core/Src/msp_SECN.o"
@@ -39,6 +40,7 @@
 "./SEGGER/SEGGER/SEGGER_RTT_printf.o"
 "./SEGGER/SEGGER/SEGGER_SYSVIEW.o"
 "./SEGGER/SEGGER/Syscalls/SEGGER_RTT_Syscalls_GCC.o"
+"./Tasks/Src/button_task.o"
 "./Tasks/Src/led_task.o"
 "./Utils/Src/debug_uart.o"
 "./Utils/Src/error_handler.o"

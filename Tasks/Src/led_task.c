@@ -11,10 +11,10 @@
 
 static void GPIO_Init_Led_Task(void);
 
-static TaskHandle_t		led_task_green_handle;
-static TaskHandle_t		led_task_orange_handle;
+TaskHandle_t		led_task_green_handle;
+TaskHandle_t		led_task_orange_handle;
 
-BaseType_t status;
+static BaseType_t status;
 
 // This creates LED_TASKS for Green and Orange LED's
 void led_task_init(void) {
@@ -59,4 +59,14 @@ static void GPIO_Init_Led_Task(void) {
 	gpiox.Pin = GPIO_PIN_0;
 	HAL_GPIO_Init(GPIOA, &gpiox);
 
+}
+
+// returns task handle of led_task_green
+TaskHandle_t get_led_task_green_handle(void) {
+	return led_task_green_handle;
+}
+
+// returns task handle of led_task_orange
+TaskHandle_t get_led_task_orange_handle(void) {
+	return led_task_orange_handle;
 }

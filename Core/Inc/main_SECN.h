@@ -23,5 +23,8 @@
 #include "error_handler.h"
 #include "debug_uart.h"
 
+void button_irq_handler(void);
+
+
 
 #endif /* INC_MAIN_SECN_H_ */

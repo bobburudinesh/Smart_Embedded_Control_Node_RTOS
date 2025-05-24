@@ -5,12 +5,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Tasks/Src/button_task.c \
 ../Tasks/Src/led_task.c 
 
 OBJS += \
+./Tasks/Src/button_task.o \
 ./Tasks/Src/led_task.o 
 
 C_DEPS += \
+./Tasks/Src/button_task.d \
 ./Tasks/Src/led_task.d 
 
 
@@ -21,7 +24,7 @@ Tasks/Src/%.o Tasks/Src/%.su Tasks/Src/%.cyclo: ../Tasks/Src/%.c Tasks/Src/subdi
 clean: clean-Tasks-2f-Src
 
 clean-Tasks-2f-Src:
-	-$(RM) ./Tasks/Src/led_task.cyclo ./Tasks/Src/led_task.d ./Tasks/Src/led_task.o ./Tasks/Src/led_task.su
+	-$(RM) ./Tasks/Src/button_task.cyclo ./Tasks/Src/button_task.d ./Tasks/Src/button_task.o ./Tasks/Src/button_task.su ./Tasks/Src/led_task.cyclo ./Tasks/Src/led_task.d ./Tasks/Src/led_task.o ./Tasks/Src/led_task.su
 
 .PHONY: clean-Tasks-2f-Src
 

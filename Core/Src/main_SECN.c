@@ -6,10 +6,10 @@
  */
 
 
-#include "main.h"
+#include "main_SECN.h"
 #include "led_task.h"
-#include "debug_uart.h"
-#include "error_handler.h"
+#include "button_task.h"
+#include "app_resources.h"
 
 
 // Enable the Cycle count
@@ -19,17 +19,22 @@ void SystemClock_Config(void);
 
 extern  void SEGGER_UART_init(uint32_t);
 
+
+
+
+
 int main(void) {
 
 	HAL_Init();
 	SystemClock_Config();
 	debug_uart_init();
+	app_resources_init();
 	led_task_init();
-
-	 DWT_CTRL |= (1<<0);
-	 SEGGER_UART_init(200000);
-	 SEGGER_SYSVIEW_Conf();
-	 vTaskStartScheduler();
+	button_task_init();
+	DWT_CTRL |= (1<<0);
+	SEGGER_UART_init(200000);
+	SEGGER_SYSVIEW_Conf();
+	vTaskStartScheduler();
 
 
 
@@ -77,7 +82,7 @@ void SystemClock_Config(void)
   }
 }
 
-
+// This function increments global tick for every 1ms based on Timer 6 for HAL peripherals.
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 
@@ -87,5 +92,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 
 }
+
+
+
+void button_irq_handler(void) {
+	BaseType_t	higher_priority_task_woken = pdFALSE;
+	print_debug_msg("Button_Pressed \n");
+	xSemaphoreGiveFromISR(xbutton_Sema, &higher_priority_task_woken);
+	portYIELD_FROM_ISR(higher_priority_task_woken);
+
+}
+
+
 
 
