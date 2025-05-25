@@ -56,7 +56,7 @@ static void GPIO_Init_Led_Task(void) {
 	gpiox.Mode = GPIO_MODE_OUTPUT_PP;
 	gpiox.Pull = GPIO_NOPULL;
 	gpiox.Speed = GPIO_SPEED_LOW;
-	gpiox.Pin = GPIO_PIN_12 | GPIO_PIN_13;
+	gpiox.Pin = GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14;
 
 	HAL_GPIO_Init(GPIOD, &gpiox);
 

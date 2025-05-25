@@ -19,7 +19,8 @@ extern QueueHandle_t	xSensor_Queue;
 
 extern TaskHandle_t next_task_to_delete;
 
-
+void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
+void vSensor_Timer_Callback( TimerHandle_t xTimer );
 
 
 typedef enum {

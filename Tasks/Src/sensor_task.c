@@ -20,12 +20,12 @@ void sensor_task_init(void) {
 void v_sensor_task(void *pvParamerter) {
 	uint8_t data;
 	while(1) {
-		 data = generate_sensor_data();
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+		data = generate_sensor_data();
 		if(xQueueSend(xSensor_Queue,(void *)&data,pdMS_TO_TICKS(200)) != pdPASS) {
 			print_error_uart();
 		}
 		print_debug_msg("Data Sent ON Queue: %u\n", data);
-		vTaskDelay(pdMS_TO_TICKS(2000));
 	}
 }
 

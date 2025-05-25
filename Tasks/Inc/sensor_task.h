@@ -11,5 +11,6 @@
 void sensor_task_init(void);
 void v_sensor_task(void *pvParamerter);
 static uint8_t generate_sensor_data(void);
+TaskHandle_t get_sensor_task_handle(void);
 
 #endif /* INC_SENSOR_TASK_H_ */
