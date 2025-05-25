@@ -41,7 +41,8 @@ void v_button_task_handler(void *pvParameters) {
 	while(1) {
 		if (xSemaphoreTake(xbutton_Sema,portMAX_DELAY) == pdTRUE) {
 			TaskHandle_t	led_orange_task = get_led_task_orange_handle();
-			xTaskNotify(led_orange_task, 0, eNoAction);
+			//xTaskNotify(led_orange_task, 0, eNoAction);	// this is replaced with Event grouping
+			xEventGroupSetBits(xSensor_Button_Event_Group, (BIT_1 | BIT_0));
 		}
 	}
 }

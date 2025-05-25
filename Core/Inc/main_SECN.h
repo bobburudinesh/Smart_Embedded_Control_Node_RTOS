@@ -14,6 +14,7 @@
 #include "queue.h"
 #include "timers.h"
 #include "semphr.h"
+#include "event_groups.h"
 
 #include"string.h"
 #include"stdio.h"

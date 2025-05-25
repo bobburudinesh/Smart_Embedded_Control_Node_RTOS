@@ -13,6 +13,7 @@
 
 
 
+
 SemaphoreHandle_t	xbutton_Sema;	// Semaphore to synchronize button ISR to button task
 
 Tasks_t current_task;
@@ -24,6 +25,8 @@ QueueHandle_t	xSensor_Queue;
 TimerHandle_t	sensor_timer;
 
 TimerHandle_t	heartbeat_timer;
+
+EventGroupHandle_t	xSensor_Button_Event_Group;
 
 
 
@@ -44,7 +47,10 @@ void app_resources_init(void) {
 	sensor_timer = xTimerCreate("Sensor_Timer", pdMS_TO_TICKS(2000), pdTRUE, (void *)1, vSensor_Timer_Callback);
 	xTimerStartResult = xTimerStart(sensor_timer, 10);
 	configASSERT_RTOS(xTimerStartResult == pdPASS, "Failed to start Sensor Timer\n");
-
+	xSensor_Button_Event_Group = xEventGroupCreate();
+	if(!xSensor_Button_Event_Group) {
+		print_error_uart();
+	}
 
 
 }
@@ -55,6 +61,8 @@ void vSensor_Timer_Callback( TimerHandle_t xTimer ) {
 		print_error_uart();
 	}
 	xTaskNotifyGive(sensor_task);
+	xEventGroupSetBits(xSensor_Button_Event_Group, BIT_0);
+
 }
 
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer ) {

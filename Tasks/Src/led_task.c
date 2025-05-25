@@ -41,9 +41,29 @@ void v_led_task_green(void *pvParameters) {
 
 //This function is task handler for Orange LED
 void v_led_task_orange(void *pvParameters)	 {
+	EventBits_t	event_bits;
 	while(1) {
-		xTaskNotifyWait(0,0,NULL,portMAX_DELAY);
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+		event_bits = xEventGroupWaitBits(xSensor_Button_Event_Group, (BIT_1 | BIT_0), pdTRUE, pdFALSE, 0);
+		if(event_bits) {
+			print_debug_msg("Event Bits: %lu\n", (uint32_t)event_bits);
+		}
+
+
+		if(event_bits & BIT_0) {
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+		}
+		if((event_bits & (BIT_1 | BIT_0)) == (BIT_1 | BIT_0)) {
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+			vTaskDelay(pdMS_TO_TICKS(100));
+			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+		}
+
+//		if((event_bits & (BIT_1 | BIT_0)) == (BIT_1 | BIT_0)) {
+//			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+//			vTaskDelay(pdMS_TO_TICKS(100));
+//			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
+//		}
+
 	}
 }
 
@@ -56,7 +76,7 @@ static void GPIO_Init_Led_Task(void) {
 	gpiox.Mode = GPIO_MODE_OUTPUT_PP;
 	gpiox.Pull = GPIO_NOPULL;
 	gpiox.Speed = GPIO_SPEED_LOW;
-	gpiox.Pin = GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14;
+	gpiox.Pin = GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
 
 	HAL_GPIO_Init(GPIOD, &gpiox);
 

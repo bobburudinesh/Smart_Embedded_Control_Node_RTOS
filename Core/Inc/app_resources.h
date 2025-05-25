@@ -11,6 +11,10 @@
 #include "main_SECN.h"
 
 
+#define BIT_0	( 1 << 0 )
+#define BIT_1	( 1 << 1 )
+
+
 void app_resources_init(void);
 
 extern SemaphoreHandle_t	xbutton_Sema;
@@ -18,6 +22,8 @@ extern SemaphoreHandle_t	xbutton_Sema;
 extern QueueHandle_t	xSensor_Queue;
 
 extern TaskHandle_t next_task_to_delete;
+
+extern EventGroupHandle_t	xSensor_Button_Event_Group;
 
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
 void vSensor_Timer_Callback( TimerHandle_t xTimer );
