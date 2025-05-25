@@ -7,13 +7,20 @@
 
 #ifndef INC_APP_RESOURCES_H_
 #define INC_APP_RESOURCES_H_
+
 #include "main_SECN.h"
+
+
+void app_resources_init(void);
 
 extern SemaphoreHandle_t	xbutton_Sema;
 
+extern QueueHandle_t	xSensor_Queue;
+
 extern TaskHandle_t next_task_to_delete;
 
-
+void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
+void vSensor_Timer_Callback( TimerHandle_t xTimer );
 
 
 typedef enum {
@@ -24,5 +31,7 @@ typedef enum {
 }Tasks_t;
 
 extern Tasks_t current_task;
+
+
 
 #endif /* INC_APP_RESOURCES_H_ */

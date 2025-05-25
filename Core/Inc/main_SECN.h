@@ -19,9 +19,13 @@
 #include"stdio.h"
 #include "stdlib.h"
 #include "stdarg.h"
+#include "stdint.h"
 
 #include "error_handler.h"
 #include "debug_uart.h"
+
+
+#define TASK_STACK_SIZE		200
 
 void button_irq_handler(void);
 

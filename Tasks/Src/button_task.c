@@ -31,7 +31,7 @@ static void button_gpio_init(void) {
 
 void button_task_init(void) {
 	button_gpio_init();
-	status = xTaskCreate(v_button_task_handler, "Button_Task", 100, NULL, 2, &button_task_handle);
+	status = xTaskCreate(v_button_task_handler, "Button_Task", TASK_STACK_SIZE, NULL, 3, &button_task_handle);
 	configASSERT_RTOS(status == pdPASS, "Button Task Init failed\n");
 }
 
@@ -41,12 +41,7 @@ void v_button_task_handler(void *pvParameters) {
 	while(1) {
 		if (xSemaphoreTake(xbutton_Sema,portMAX_DELAY) == pdTRUE) {
 			TaskHandle_t	led_orange_task = get_led_task_orange_handle();
-			vTaskSuspend(led_orange_task);
-			if(HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_13)) {
-				HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
-			}
-			vTaskDelay(pdMS_TO_TICKS(5000));
-			vTaskResume(led_orange_task);
+			xTaskNotify(led_orange_task, 0, eNoAction);
 		}
 	}
 }

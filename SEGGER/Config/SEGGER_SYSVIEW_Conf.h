@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.60d                                    *
+*       SystemView version: 3.54                                    *
 *                                                                    *
 **********************************************************************
 -------------------------- END-OF-HEADER -----------------------------
@@ -75,31 +75,14 @@ Additional information:
 */
 
 /*********************************************************************
-*
-*       Define: SEGGER_SYSVIEW_SECTION
-*
-*  Description
-*    Section to place the SystemView RTT Buffer into.
-*  Default
-*    undefined: Do not place into a specific section.
-*  Notes
-*    If SEGGER_RTT_SECTION is defined, the default changes to use
-*    this section for the SystemView RTT Buffer, too.
-*/
-#if !(defined SEGGER_SYSVIEW_SECTION) && (defined SEGGER_RTT_BUFFER_SECTION)
-  #define SEGGER_SYSVIEW_SECTION                  SEGGER_RTT_BUFFER_SECTION
-#endif
-
-
-/*********************************************************************
 * TODO: Add your defines here.                                       *
 **********************************************************************
 */
 #define SEGGER_UART_REC 1
 
 #if (SEGGER_UART_REC == 1)
-	extern void HIF_UART_EnableTXEInterrupt  (void);
-	#define SEGGER_SYSVIEW_ON_EVENT_RECORDED(x)  HIF_UART_EnableTXEInterrupt()
+  extern void HIF_UART_EnableTXEInterrupt  (void);
+  #define SEGGER_SYSVIEW_ON_EVENT_RECORDED(x)  HIF_UART_EnableTXEInterrupt()
 #endif
 
 #endif  // SEGGER_SYSVIEW_CONF_H

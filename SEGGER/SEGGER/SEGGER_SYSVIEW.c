@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.60d                                    *
+*       SystemView version: 3.54                                    *
 *                                                                    *
 **********************************************************************
 -------------------------- END-OF-HEADER -----------------------------
@@ -372,7 +372,7 @@ static U8                     _NumModules;
                                    U8* pSysviewPointer;                             \
                                    U32 SysViewData;                                 \
                                    pSysviewPointer = pDest;                         \
-                                   SysViewData = (U32)Value;                        \
+                                   SysViewData = Value;                             \
                                    while(SysViewData > 0x7F) {                      \
                                      *pSysviewPointer++ = (U8)(SysViewData | 0x80); \
                                      SysViewData >>= 7;                             \
@@ -380,6 +380,8 @@ static U8                     _NumModules;
                                    *pSysviewPointer++ = (U8)SysViewData;            \
                                    pDest = pSysviewPointer;                         \
                                  };
+
+
 
 #if (SEGGER_SYSVIEW_USE_STATIC_BUFFER == 1)
 static U8 _aPacket[SEGGER_SYSVIEW_MAX_PACKET_SIZE];
@@ -445,40 +447,6 @@ static U8* _EncodeData(U8* pPayload, const char* pSrc, unsigned int NumBytes) {
 
 /*********************************************************************
 *
-*       _EncodeFloat()
-*
-*  Function description
-*    Encode a float value in variable-length format.
-*
-*  Parameters
-*    pPayload - Pointer to where value will be encoded.
-*    Value    - Value to be encoded.
-*
-*  Return value
-*    Pointer to the byte following the value, i.e. the first free
-*    byte in the payload and the next position to store payload
-*    content.
-*/
-static U8* _EncodeFloat(U8* pPayload, float Value) {
-  float  Val;                                
-  U8*    pSysviewPointer;                             
-  U32*   SysViewData;
-
-  Val = Value;                                 
-  pSysviewPointer = pPayload;                        
-  SysViewData = (U32*)&Val;                             
-  while((*SysViewData) > 0x7F) {          
-    *pSysviewPointer++ = (U8)((*SysViewData) | 0x80); 
-    (*SysViewData) >>= 7;                            
-  }                                               
-  *pSysviewPointer++ = (U8)(*SysViewData);            
-  pPayload = pSysviewPointer;
-
-  return pPayload;
-}
-
-/*********************************************************************
-*
 *       _EncodeStr()
 *
 *  Function description
@@ -503,38 +471,34 @@ static U8 *_EncodeStr(U8 *pPayload, const char *pText, unsigned int Limit) {
   U8* pLen;
   const char* sStart;
 
-  if (pText == NULL) {
-    *pPayload++ = (U8)0;
-  } else {
-    sStart = pText; // Remember start of string.
-    //
-    // Save space to store count byte(s).
-    //
-    pLen = pPayload++;
+  sStart = pText; // Remember start of string.
+  //
+  // Save space to store count byte(s).
+  //
+  pLen = pPayload++;
 #if (SEGGER_SYSVIEW_MAX_STRING_LEN >= 255)  // Length always encodes in 3 bytes
-    pPayload += 2;
+  pPayload += 2;
 #endif
-    //
-    // Limit string to maximum length and copy into payload buffer.
-    //
-    if (Limit > SEGGER_SYSVIEW_MAX_STRING_LEN) {
-      Limit = SEGGER_SYSVIEW_MAX_STRING_LEN;
-    }
-    while ((Limit-- > 0) && (*pText != '\0')) {
-      *pPayload++ = *pText++;
-    }
-    //
-    // Save string length to buffer.
-    //
-#if (SEGGER_SYSVIEW_MAX_STRING_LEN >= 255)  // Length always encodes in 3 bytes
-    Limit = (unsigned int)(pText - sStart);
-    *pLen++ = (U8)255;
-    *pLen++ = (U8)((Limit >> 8) & 255);
-    *pLen++ = (U8)(Limit & 255);
-#else   // Length always encodes in 1 byte
-    *pLen = (U8)(pText - sStart);
-#endif
+  //
+  // Limit string to maximum length and copy into payload buffer.
+  //
+  if (Limit > SEGGER_SYSVIEW_MAX_STRING_LEN) {
+    Limit = SEGGER_SYSVIEW_MAX_STRING_LEN;
   }
+  while ((Limit-- > 0) && (*pText != '\0')) {
+    *pPayload++ = *pText++;
+  }
+  //
+  // Save string length to buffer.
+  //
+#if (SEGGER_SYSVIEW_MAX_STRING_LEN >= 255)  // Length always encodes in 3 bytes
+  Limit = (unsigned int)(pText - sStart);
+  *pLen++ = (U8)255;
+  *pLen++ = (U8)((Limit >> 8) & 255);
+  *pLen++ = (U8)(Limit & 255);
+#else   // Length always encodes in 1 byte
+  *pLen = (U8)(pText - sStart);
+#endif
   //
   return pPayload;
 }
@@ -655,7 +619,7 @@ static int _TrySendOverflowPacket(void) {
   // Compute time stamp delta and append it to packet.
   //
   TimeStamp  = SEGGER_SYSVIEW_GET_TIMESTAMP();
-  Delta = (I32)(TimeStamp - _SYSVIEW_Globals.LastTxTimeStamp);
+  Delta = TimeStamp - _SYSVIEW_Globals.LastTxTimeStamp;
   MAKE_DELTA_32BIT(Delta);
   ENCODE_U32(pPayload, Delta);
   //
@@ -1429,6 +1393,12 @@ static void _VPrintTarget(const char* sFormat, U32 Options, va_list* pParamList)
 *    The channel is configured with the macro SEGGER_SYSVIEW_RTT_CHANNEL.
 */
 void SEGGER_SYSVIEW_Init(U32 SysFreq, U32 CPUFreq, const SEGGER_SYSVIEW_OS_API *pOSAPI, SEGGER_SYSVIEW_SEND_SYS_DESC_FUNC pfSendSysDesc) {
+#ifdef SEGGER_RTT_SECTION
+  //
+  // Explicitly initialize the RTT Control Block if it is in its dedicated section.
+  //
+  SEGGER_RTT_Init();
+#endif
 #if (SEGGER_SYSVIEW_POST_MORTEM_MODE == 1)
 #if SEGGER_SYSVIEW_RTT_CHANNEL > 0
   SEGGER_RTT_ConfigUpBuffer(SEGGER_SYSVIEW_RTT_CHANNEL, "SysView", &_UpBuffer[0],   sizeof(_UpBuffer),   SEGGER_RTT_MODE_NO_BLOCK_SKIP);
@@ -2012,31 +1982,7 @@ void SEGGER_SYSVIEW_SendStackInfo(const SEGGER_SYSVIEW_STACKINFO *pInfo) {
   ENCODE_U32(pPayload, pInfo->StackBase);
   ENCODE_U32(pPayload, pInfo->StackSize);
   ENCODE_U32(pPayload, pInfo->StackUsage);
-
-  RECORD_END();
-}
-
-/*********************************************************************
-*
-*        SEGGER_SYSVIEW_SampleData()
-*
-*  Function description
-*    Send a Data Sample Packet, containing the data Id and the value. 
-*    
-*
-*  Parameters
-*    pInfo - Pointer to data sample struct to send.
-*/
-void SEGGER_SYSVIEW_SampleData(const SEGGER_SYSVIEW_DATA_SAMPLE *pInfo) {
-  U8* pPayload;
-  U8* pPayloadStart;
-  RECORD_START(SEGGER_SYSVIEW_INFO_SIZE + 2 * SEGGER_SYSVIEW_QUANTA_U32);
-  //
-  pPayload = pPayloadStart;
-  ENCODE_U32(pPayload, pInfo->ID);
-  pPayload = _EncodeFloat(pPayload, *(pInfo->pValue.pFloat));
-  _SendPacket(pPayloadStart, pPayload, SYSVIEW_EVTID_DATA_SAMPLE);
-  
+  _SendPacket(pPayloadStart, pPayload, SYSVIEW_EVTID_STACK_INFO);
   RECORD_END();
 }
 
@@ -2521,63 +2467,6 @@ void SEGGER_SYSVIEW_NameResource(U32 ResourceId, const char* sName) {
   ENCODE_U32(pPayload, SHRINK_ID(ResourceId));
   pPayload = _EncodeStr(pPayload, sName, SEGGER_SYSVIEW_MAX_STRING_LEN);
   _SendPacket(pPayloadStart, pPayload, SYSVIEW_EVTID_NAME_RESOURCE);
-  RECORD_END();
-}
-
-/*********************************************************************
-*
-*       SEGGER_SYSVIEW_RegisterData()
-*
-*  Function description
-*    Register data to sample the values via SystemView.
-*
-*    Register functions are usually set in the system description
-*    callback, to ensure it is only sent when the SystemView Application
-*    is connected.
-*
-*  Parameters
-*    pInfo - Struct containing all possible properties that can be sent via this registration event.
-*/
-void SEGGER_SYSVIEW_RegisterData(SEGGER_SYSVIEW_DATA_REGISTER* pInfo) {
-  U8* pPayload;
-  U8* pPayloadStart;
-  RECORD_START(SEGGER_SYSVIEW_INFO_SIZE + 8 * SEGGER_SYSVIEW_QUANTA_U32 + 1 + SEGGER_SYSVIEW_MAX_STRING_LEN);
-  //
-  pPayload = pPayloadStart;
-  ENCODE_U32(pPayload, SYSVIEW_EVTID_EX_REGISTER_DATA);
-  ENCODE_U32(pPayload, pInfo->ID);
-  pPayload = _EncodeStr(pPayload, pInfo->sName, SEGGER_SYSVIEW_MAX_STRING_LEN);
-  
-  if (pInfo->sUnit != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-    ENCODE_U32(pPayload, pInfo->Offset);
-    ENCODE_U32(pPayload, pInfo->RangeMin);
-    ENCODE_U32(pPayload, pInfo->RangeMax);
-    pPayload = _EncodeFloat(pPayload, pInfo->ScalingFactor);
-    pPayload = _EncodeStr(pPayload, pInfo->sUnit, SEGGER_SYSVIEW_MAX_STRING_LEN);
-  } else if (pInfo->ScalingFactor != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-    ENCODE_U32(pPayload, pInfo->Offset);
-    ENCODE_U32(pPayload, pInfo->RangeMin);
-    ENCODE_U32(pPayload, pInfo->RangeMax);
-    pPayload = _EncodeFloat(pPayload, pInfo->ScalingFactor);
-  } else if (pInfo->RangeMax != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-    ENCODE_U32(pPayload, pInfo->Offset);
-    ENCODE_U32(pPayload, pInfo->RangeMin);
-    ENCODE_U32(pPayload, pInfo->RangeMax);
-  } else if (pInfo->RangeMin != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-    ENCODE_U32(pPayload, pInfo->Offset);
-    ENCODE_U32(pPayload, pInfo->RangeMin);
-  } else if (pInfo->Offset != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-    ENCODE_U32(pPayload, pInfo->Offset);
-  } else if (pInfo->DataType != 0) {
-    ENCODE_U32(pPayload, pInfo->DataType);
-  }
-
-  _SendPacket(pPayloadStart, pPayload, SYSVIEW_EVTID_EX);
   RECORD_END();
 }
 
