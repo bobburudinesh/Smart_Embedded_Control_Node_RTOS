@@ -1,0 +1,4 @@
+../Tasks/Src/sensor_task.c:15:6:sensor_task_init	16	static
+../Tasks/Src/sensor_task.c:20:6:v_sensor_task	24	static
+../Tasks/Src/sensor_task.c:32:14:get_sensor_task_handle	4	static
+../Tasks/Src/sensor_task.c:36:16:generate_sensor_data	16	static

@@ -71,7 +71,7 @@ main-build: Smart_Embedded_Control_Node_RTOS.elf secondary-outputs
 
 # Tool invocations
 Smart_Embedded_Control_Node_RTOS.elf Smart_Embedded_Control_Node_RTOS.map: $(OBJS) $(USER_OBJS) /Users/dineshbobburu/Documents/Embedded\ Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Smart_Embedded_Control_Node_RTOS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Smart_Embedded_Control_Node_RTOS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "Smart_Embedded_Control_Node_RTOS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/dineshbobburu/Documents/Embedded Systems/Projects/STM32/Smart_Embedded_Control_Node_RTOS/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Smart_Embedded_Control_Node_RTOS.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

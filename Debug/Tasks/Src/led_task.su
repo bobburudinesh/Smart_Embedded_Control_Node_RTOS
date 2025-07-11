@@ -1,0 +1,6 @@
+../Tasks/Src/led_task.c:21:6:led_task_init	16	static
+../Tasks/Src/led_task.c:31:6:v_led_task_green	24	static
+../Tasks/Src/led_task.c:45:6:v_led_task_orange	32	static
+../Tasks/Src/led_task.c:65:13:GPIO_Init_Led_Task	40	static
+../Tasks/Src/led_task.c:84:14:get_led_task_green_handle	4	static
+../Tasks/Src/led_task.c:89:14:get_led_task_orange_handle	4	static

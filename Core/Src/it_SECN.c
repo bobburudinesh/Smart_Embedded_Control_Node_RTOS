@@ -9,6 +9,9 @@
 
 extern UART_HandleTypeDef	huart3;
 
+extern TIM_HandleTypeDef	hlptim;
+extern TIM_HandleTypeDef	htim7;
+
 extern TIM_HandleTypeDef htim6;
 extern void button_irq_handler(void);
 
@@ -25,4 +28,12 @@ void USART3_IRQHandler(void) {
 void EXTI0_IRQHandler(void) {
 	button_irq_handler();
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+}
+
+void TIM2_IRQHandler(void) {
+	HAL_TIM_IRQHandler(&hlptim);
+}
+
+void TIM7_IRQHandler(void) {
+	HAL_TIM_IRQHandler(&htim7);
 }
