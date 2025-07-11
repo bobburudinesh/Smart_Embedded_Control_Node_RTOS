@@ -1,5 +1,0 @@
-../Tasks/Src/button_task.c:20:13:button_gpio_init	32	static
-../Tasks/Src/button_task.c:32:6:button_task_init	16	static
-../Tasks/Src/button_task.c:40:6:v_button_task_handler	24	static
-../Tasks/Src/button_task.c:52:14:get_button_task_handle	4	static
-../Tasks/Src/button_task.c:56:6:print_date_and_Time	56	static

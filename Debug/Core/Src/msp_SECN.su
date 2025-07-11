@@ -1,7 +1,0 @@
-../Core/Src/msp_SECN.c:13:6:HAL_MspInit	16	static
-../Core/Src/msp_SECN.c:19:6:HAL_UART_MspInit	80	static
-../Core/Src/msp_SECN.c:54:6:HAL_TIM_Base_MspInit	24	static
-../Core/Src/msp_SECN.c:63:6:HAL_TIM_IC_MspInit	48	static
-../Core/Src/msp_SECN.c:78:6:HAL_TIM_OC_MspInit	48	static
-../Core/Src/msp_SECN.c:92:6:HAL_TIM_PWM_MspDeInit	48	static
-../Core/Src/msp_SECN.c:106:6:HAL_RTC_MspInit	80	static

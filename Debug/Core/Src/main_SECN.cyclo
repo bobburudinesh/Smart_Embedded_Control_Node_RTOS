@@ -1,7 +1,0 @@
-../Core/Src/main_SECN.c:32:5:main	1
-../Core/Src/main_SECN.c:97:6:SystemClock_Config	3
-../Core/Src/main_SECN.c:140:6:HAL_TIM_PeriodElapsedCallback	3
-../Core/Src/main_SECN.c:154:6:HAL_TIM_IC_CaptureCallback	5
-../Core/Src/main_SECN.c:168:6:button_irq_handler	2
-../Core/Src/main_SECN.c:176:6:get_frequency_from_IC	2
-../Core/Src/main_SECN.c:194:10:get_PCK1	2

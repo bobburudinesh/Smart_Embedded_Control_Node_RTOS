@@ -1,3 +1,0 @@
-../Core/Src/app_resources.c:33:6:app_resources_init	32	static
-../Core/Src/app_resources.c:58:6:vSensor_Timer_Callback	32	static
-../Core/Src/app_resources.c:68:6:vHeartbeat_Timer_Callback	16	static

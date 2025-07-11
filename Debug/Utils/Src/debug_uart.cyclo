@@ -1,2 +1,0 @@
-../Utils/Src/debug_uart.c:13:6:debug_uart_init	2
-../Utils/Src/debug_uart.c:27:6:print_debug_msg	1
