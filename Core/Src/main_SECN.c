@@ -41,8 +41,6 @@ int main(void) {
 	led_task_init();
 	button_task_init();
 	sensor_task_init();
-	//timer_OC_Init();
-	//HAL_TIM_OC_Start_IT(&hlptim, TIM_CHANNEL_2);
 	vTaskStartScheduler();
 
 
@@ -139,25 +137,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
     HAL_IncTick();
   }
-//  if(htim->Instance == TIM7) {
-//  		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
-//  }
-
 
 }
 
-//void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
-//	  if(htim->Instance == TIM2) {
-//
-//			  if(!captureValues[0]) {
-//				  captureValues[0] = __HAL_TIM_GET_COMPARE(&hlptim, TIM_CHANNEL_2);
-//			  } else if(!captureValues[1] && (captureValues[0] != 0)) {
-//				  captureValues[1] = __HAL_TIM_GET_COMPARE(&hlptim, TIM_CHANNEL_2);
-//				  capturedComplete = 1;
-//				  get_frequency_from_IC();
-//			  }
-//	  }
-//}
+
 
 
 void button_irq_handler(void) {
@@ -168,23 +151,6 @@ void button_irq_handler(void) {
 
 }
 
-//void get_frequency_from_IC(void) {
-//	if(captureValues[0] <= captureValues[1]) {
-//		capture_difference = captureValues[1] - captureValues[0];
-//	} else {
-//		capture_difference = (0xFFFFFFFF - captureValues[0]) + captureValues[1];
-//	}
-//
-//	timer2_cnt_freq = (HAL_RCC_GetPCLK1Freq() * 2 )/(hlptim.Init.Prescaler + 1);
-//	timer2_cnt_res = 1/timer2_cnt_freq;
-//	user_signal_time_period = capture_difference * timer2_cnt_res;
-//	user_signal_freq = 1/user_signal_time_period;
-//	print_debug_msg("Frequency of the signal applied = %.2f Hz\r\n",user_signal_freq);
-//	//sprintf(usr_msg,"Frequency of the signal applied = %.2f Hz\r\n",user_signal_freq );
-//
-//	memset(captureValues, 0, sizeof(captureValues));
-//	capturedComplete = 0;
-//}
 
 uint32_t get_PCK1(void) {
 	if(((RCC->CFGR >> 10) & 0x7) > 1) {
@@ -194,5 +160,24 @@ uint32_t get_PCK1(void) {
 }
 
 
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+	print_error_uart();
+}
+
+void vApplicationMallocFailedHook(void) {
+	print_error_uart();
+}
+
+void MemManage_Handler(void) {
+	while(1);
+}
+
+void BusFault_Handler(void) {
+	while(1);
+}
+
+void UsageFault_Handler(void) {
+	while(1);
+}
 
 

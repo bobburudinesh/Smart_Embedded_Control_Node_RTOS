@@ -11,10 +11,14 @@
 
 
 void HAL_MspInit(void) {
+	SCB->SHCSR |= (SCB_SHCSR_MEMFAULTENA_Msk | SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk);
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
 	__HAL_RCC_PWR_CLK_ENABLE();
 	vInitPrioGroupValue();
 }
+
+
+
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 // Low Level Initialization for UART Peripheral

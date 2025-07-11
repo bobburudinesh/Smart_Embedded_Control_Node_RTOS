@@ -28,8 +28,6 @@
 
 #define TASK_STACK_SIZE		200
 
-extern TIM_HandleTypeDef	hlptim;
-extern TIM_HandleTypeDef	htim7;
 extern RTC_HandleTypeDef	hrtc;
 
 void button_irq_handler(void);
