@@ -6,7 +6,6 @@
 "./Core/Src/syscalls.o"
 "./Core/Src/sysmem.o"
 "./Core/Src/system_stm32f4xx.o"
-"./Core/Src/timer_Low_Power_Mode.o"
 "./Core/Startup/startup_stm32f407vgtx.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o"
@@ -48,3 +47,4 @@
 "./Tasks/Src/sensor_task.o"
 "./Utils/Src/debug_uart.o"
 "./Utils/Src/error_handler.o"
+"./Utils/Src/tickless_rtc.o"

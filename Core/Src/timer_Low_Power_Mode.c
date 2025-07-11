@@ -10,7 +10,7 @@
 TIM_HandleTypeDef	hlptim;
 TIM_HandleTypeDef	htim7;
 RTC_HandleTypeDef	hrtc;
-
+/*
 void timer_init_Basic(void) {
 
 	htim7.Instance = TIM7;
@@ -88,6 +88,7 @@ void timer_PWM_Init(void) {
 	}
 
 }
+*/
 
 void rtc_init(void) {
 
