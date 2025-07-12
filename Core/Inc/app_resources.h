@@ -11,8 +11,25 @@
 #include "main_SECN.h"
 
 
+
 #define BIT_0	( 1 << 0 )
 #define BIT_1	( 1 << 1 )
+
+
+typedef enum {
+	idle_Task = 0,
+	Led_Green_Task,
+	Led_Orange_Task,
+	Button_Task
+}Tasks_t;
+
+typedef enum {
+	SYS_STATE_INIT = 0,
+	SYS_STATE_RUNNING,
+	SYS_STATE_ERROR,
+	SYS_STATE_RESET
+} system_state_t;
+
 
 
 void app_resources_init(void);
@@ -29,12 +46,7 @@ void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
 void vSensor_Timer_Callback( TimerHandle_t xTimer );
 
 
-typedef enum {
-	idle_Task = 0,
-	Led_Green_Task,
-	Led_Orange_Task,
-	Button_Task
-}Tasks_t;
+
 
 extern Tasks_t current_task;
 

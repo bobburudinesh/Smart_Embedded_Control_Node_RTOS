@@ -5,16 +5,19 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Tasks/Src/Activity_Monitor_Task.c \
 ../Tasks/Src/button_task.c \
 ../Tasks/Src/led_task.c \
 ../Tasks/Src/sensor_task.c 
 
 OBJS += \
+./Tasks/Src/Activity_Monitor_Task.o \
 ./Tasks/Src/button_task.o \
 ./Tasks/Src/led_task.o \
 ./Tasks/Src/sensor_task.o 
 
 C_DEPS += \
+./Tasks/Src/Activity_Monitor_Task.d \
 ./Tasks/Src/button_task.d \
 ./Tasks/Src/led_task.d \
 ./Tasks/Src/sensor_task.d 
@@ -27,7 +30,7 @@ Tasks/Src/%.o Tasks/Src/%.su Tasks/Src/%.cyclo: ../Tasks/Src/%.c Tasks/Src/subdi
 clean: clean-Tasks-2f-Src
 
 clean-Tasks-2f-Src:
-	-$(RM) ./Tasks/Src/button_task.cyclo ./Tasks/Src/button_task.d ./Tasks/Src/button_task.o ./Tasks/Src/button_task.su ./Tasks/Src/led_task.cyclo ./Tasks/Src/led_task.d ./Tasks/Src/led_task.o ./Tasks/Src/led_task.su ./Tasks/Src/sensor_task.cyclo ./Tasks/Src/sensor_task.d ./Tasks/Src/sensor_task.o ./Tasks/Src/sensor_task.su
+	-$(RM) ./Tasks/Src/Activity_Monitor_Task.cyclo ./Tasks/Src/Activity_Monitor_Task.d ./Tasks/Src/Activity_Monitor_Task.o ./Tasks/Src/Activity_Monitor_Task.su ./Tasks/Src/button_task.cyclo ./Tasks/Src/button_task.d ./Tasks/Src/button_task.o ./Tasks/Src/button_task.su ./Tasks/Src/led_task.cyclo ./Tasks/Src/led_task.d ./Tasks/Src/led_task.o ./Tasks/Src/led_task.su ./Tasks/Src/sensor_task.cyclo ./Tasks/Src/sensor_task.d ./Tasks/Src/sensor_task.o ./Tasks/Src/sensor_task.su
 
 .PHONY: clean-Tasks-2f-Src
 

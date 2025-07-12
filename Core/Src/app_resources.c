@@ -40,7 +40,7 @@ void app_resources_init(void) {
 	if(!xSensor_Queue) {
 		print_error_uart();
 	}
-	heartbeat_timer = xTimerCreate("Heartbeat_Timer", pdMS_TO_TICKS(1000), pdTRUE, (void*)0, vHeartbeat_Timer_Callback);
+	heartbeat_timer = xTimerCreate("Heartbeat_Timer", pdMS_TO_TICKS(100), pdTRUE, (void*)0, vHeartbeat_Timer_Callback);
 
 	xTimerStartResult = xTimerStart(heartbeat_timer, 10);
 	configASSERT_RTOS(xTimerStartResult == pdPASS, "Failed to start Heartbeat Timer\n");
@@ -66,8 +66,6 @@ void vSensor_Timer_Callback( TimerHandle_t xTimer ) {
 }
 
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer ) {
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-	HAL_Delay(100);
-	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+	//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);
 }
 

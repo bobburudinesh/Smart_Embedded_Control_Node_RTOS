@@ -6,15 +6,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Utils/Src/debug_uart.c \
-../Utils/Src/error_handler.c 
+../Utils/Src/error_handler.c \
+../Utils/Src/tickless_rtc.c 
 
 OBJS += \
 ./Utils/Src/debug_uart.o \
-./Utils/Src/error_handler.o 
+./Utils/Src/error_handler.o \
+./Utils/Src/tickless_rtc.o 
 
 C_DEPS += \
 ./Utils/Src/debug_uart.d \
-./Utils/Src/error_handler.d 
+./Utils/Src/error_handler.d \
+./Utils/Src/tickless_rtc.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -24,7 +27,7 @@ Utils/Src/%.o Utils/Src/%.su Utils/Src/%.cyclo: ../Utils/Src/%.c Utils/Src/subdi
 clean: clean-Utils-2f-Src
 
 clean-Utils-2f-Src:
-	-$(RM) ./Utils/Src/debug_uart.cyclo ./Utils/Src/debug_uart.d ./Utils/Src/debug_uart.o ./Utils/Src/debug_uart.su ./Utils/Src/error_handler.cyclo ./Utils/Src/error_handler.d ./Utils/Src/error_handler.o ./Utils/Src/error_handler.su
+	-$(RM) ./Utils/Src/debug_uart.cyclo ./Utils/Src/debug_uart.d ./Utils/Src/debug_uart.o ./Utils/Src/debug_uart.su ./Utils/Src/error_handler.cyclo ./Utils/Src/error_handler.d ./Utils/Src/error_handler.o ./Utils/Src/error_handler.su ./Utils/Src/tickless_rtc.cyclo ./Utils/Src/tickless_rtc.d ./Utils/Src/tickless_rtc.o ./Utils/Src/tickless_rtc.su
 
 .PHONY: clean-Utils-2f-Src
 

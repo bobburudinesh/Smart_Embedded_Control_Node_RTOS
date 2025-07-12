@@ -60,9 +60,9 @@
 #define configIDLE_SHOULD_YIELD			1
 #define configUSE_MUTEXES				1
 #define configQUEUE_REGISTRY_SIZE		8
-#define configCHECK_FOR_STACK_OVERFLOW	0
+#define configCHECK_FOR_STACK_OVERFLOW	2
 #define configUSE_RECURSIVE_MUTEXES		1
-#define configUSE_MALLOC_FAILED_HOOK	0
+#define configUSE_MALLOC_FAILED_HOOK	1
 #define configUSE_APPLICATION_TASK_TAG	0
 #define configUSE_COUNTING_SEMAPHORES	1
 #define configGENERATE_RUN_TIME_STATS	0
@@ -126,6 +126,12 @@ standard names. */
 #define xPortPendSVHandler PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
 
+
+/*
+ * Low Power Mode and Tickless Idle
+ * */
+#define configUSE_TICKLESS_IDLE	1
+#define configEXPECTED_IDLE_TIME_BEFORE_SLEEP	20
 #define USE_SEGGER_SYSVIEW 1  // Enable tracing if set to 1: FOR SEGGER VIEW
 
 #include "SEGGER_SYSVIEW_FreeRTOS.h"

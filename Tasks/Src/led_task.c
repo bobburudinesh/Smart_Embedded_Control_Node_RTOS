@@ -36,6 +36,8 @@ void v_led_task_green(void *pvParameters) {
 			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, data);
 		}
 
+//		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+//		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 }
 
@@ -43,7 +45,7 @@ void v_led_task_green(void *pvParameters) {
 void v_led_task_orange(void *pvParameters)	 {
 	EventBits_t	event_bits;
 	while(1) {
-		event_bits = xEventGroupWaitBits(xSensor_Button_Event_Group, (BIT_1 | BIT_0), pdTRUE, pdFALSE, 0);
+		event_bits = xEventGroupWaitBits(xSensor_Button_Event_Group, (BIT_1 | BIT_0), pdTRUE, pdTRUE, portMAX_DELAY);
 		if(event_bits) {
 			print_debug_msg("Event Bits: %lu\n", (uint32_t)event_bits);
 		}
@@ -53,16 +55,8 @@ void v_led_task_orange(void *pvParameters)	 {
 			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 		}
 		if((event_bits & (BIT_1 | BIT_0)) == (BIT_1 | BIT_0)) {
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-			vTaskDelay(pdMS_TO_TICKS(100));
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_RESET);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 		}
-
-//		if((event_bits & (BIT_1 | BIT_0)) == (BIT_1 | BIT_0)) {
-//			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-//			vTaskDelay(pdMS_TO_TICKS(100));
-//			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-//		}
 
 	}
 }

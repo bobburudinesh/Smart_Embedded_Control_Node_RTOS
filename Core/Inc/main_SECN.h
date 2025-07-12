@@ -28,8 +28,16 @@
 
 #define TASK_STACK_SIZE		200
 
+extern RTC_HandleTypeDef	hrtc;
+
 void button_irq_handler(void);
-
-
+void timer_init_LPM(void); // Test Purpose Timer 2
+void timer_init_Basic(void); // test purpose Timer 7.
+void get_frequency_from_IC(void);
+uint32_t get_PCK1(void);
+void timer_OC_Init(void);
+void timer_PWM_Init(void);
+void rtc_init(void);
+void rtc_date_time_config(void);
 
 #endif /* INC_MAIN_SECN_H_ */

@@ -10,6 +10,7 @@
 #include "led_task.h"
 #include "button_task.h"
 #include "app_resources.h"
+#include "Activity_Monitor_Task.h"
 
 
 // Enable the Cycle count
@@ -19,8 +20,14 @@ void SystemClock_Config(void);
 
 extern  void SEGGER_UART_init(uint32_t);
 
+uint32_t captureValues[2] = {0};
+uint8_t capturedComplete = 0;
 
-
+uint32_t capture_difference =0;
+double timer2_cnt_freq=0;
+double timer2_cnt_res=0;
+double user_signal_time_period =0;
+double user_signal_freq=0;
 
 
 int main(void) {
@@ -29,56 +36,62 @@ int main(void) {
 	SystemClock_Config();
 	debug_uart_init();
 	DWT_CTRL |= (1<<0);
-	SEGGER_UART_init(200000);
+	SEGGER_UART_init(1050000);
 	SEGGER_SYSVIEW_Conf();
+	if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST)) {
+	    print_debug_msg("System restarted from WDT reset!\n");
+	    __HAL_RCC_CLEAR_RESET_FLAGS();
+	}
+	IWDGT_Init();
 	app_resources_init();
 	led_task_init();
 	button_task_init();
 	sensor_task_init();
+	activity_Monitor_Task_Init();
 	vTaskStartScheduler();
 
-
-
 }
-/*
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 64;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-	  print_error_uart();
-  }
-
-
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV4;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
-	  print_error_uart();
-  }
-}
-*/
+//void SystemClock_Config(void)
+//{
+//  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+//
+//  /** Configure the main internal regulator output voltage
+//  */
+//  __HAL_RCC_PWR_CLK_ENABLE();
+//  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+//
+//  /** Initializes the RCC Oscillators according to the specified parameters
+//  * in the RCC_OscInitTypeDef structure.
+//  */
+//  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+//  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+//  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+//  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+//  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+//  RCC_OscInitStruct.PLL.PLLM = 8;
+//  RCC_OscInitStruct.PLL.PLLN = 64;
+//  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+//  RCC_OscInitStruct.PLL.PLLQ = 7;
+//  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+//  {
+//	  print_error_uart();
+//  }
+//
+//  /** Initializes the CPU, AHB and APB buses clocks
+//  */
+//  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+//                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+//  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV4;
+//  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+//  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+//
+//  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+//  {
+//	  print_error_uart();
+//  }
+//}
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -134,6 +147,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 
 
+
 void button_irq_handler(void) {
 	BaseType_t	higher_priority_task_woken = pdFALSE;
 	print_debug_msg("Button_Pressed \n");
@@ -143,5 +157,32 @@ void button_irq_handler(void) {
 }
 
 
+uint32_t get_PCK1(void) {
+	if(((RCC->CFGR >> 10) & 0x7) > 1) {
+		return HAL_RCC_GetPCLK1Freq()*2;
+	}
+	return HAL_RCC_GetPCLK1Freq();
+}
+
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
+	print_error_uart();
+}
+
+void vApplicationMallocFailedHook(void) {
+	print_error_uart();
+}
+
+void MemManage_Handler(void) {
+	while(1);
+}
+
+void BusFault_Handler(void) {
+	while(1);
+}
+
+void UsageFault_Handler(void) {
+	while(1);
+}
 
 
