@@ -10,6 +10,7 @@
 #include "led_task.h"
 #include "button_task.h"
 #include "app_resources.h"
+#include "Activity_Monitor_Task.h"
 
 
 // Enable the Cycle count
@@ -37,13 +38,17 @@ int main(void) {
 	DWT_CTRL |= (1<<0);
 	SEGGER_UART_init(1050000);
 	SEGGER_SYSVIEW_Conf();
+	if (__HAL_RCC_GET_FLAG(RCC_FLAG_IWDGRST)) {
+	    print_debug_msg("System restarted from WDT reset!\n");
+	    __HAL_RCC_CLEAR_RESET_FLAGS();
+	}
+	IWDGT_Init();
 	app_resources_init();
 	led_task_init();
 	button_task_init();
 	sensor_task_init();
+	activity_Monitor_Task_Init();
 	vTaskStartScheduler();
-
-
 
 }
 //void SystemClock_Config(void)
