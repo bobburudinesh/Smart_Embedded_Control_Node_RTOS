@@ -40,7 +40,6 @@ void button_task_init(void) {
 void v_button_task_handler(void *pvParameters) {
 	while(1) {
 		if (xSemaphoreTake(xbutton_Sema,portMAX_DELAY) == pdTRUE) {
-			print_date_and_Time();
 			TaskHandle_t	led_orange_task = get_led_task_orange_handle();
 			//xTaskNotify(led_orange_task, 0, eNoAction);	// this is replaced with Event grouping
 			xEventGroupSetBits(xSensor_Button_Event_Group, (BIT_1 | BIT_0));
@@ -53,12 +52,4 @@ TaskHandle_t get_button_task_handle(void) {
 	return button_task_handle;
 }
 
-void print_date_and_Time(void) {
-	RTC_TimeTypeDef	rtc_time;
-	RTC_DateTypeDef rtc_date;
-	HAL_RTC_GetTime(&hrtc, &rtc_time, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, &rtc_date, RTC_FORMAT_BIN);
-	print_debug_msg("Current Time and Date is: %02d:%02d:%02d --- %02d-%02d-%02d \r\n", rtc_time.Hours, rtc_time.Minutes, rtc_time.Seconds, rtc_date.Month, rtc_date.Date, rtc_date.Year);
 
-
-}

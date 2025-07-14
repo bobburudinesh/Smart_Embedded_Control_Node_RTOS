@@ -22,11 +22,14 @@ TaskHandle_t next_task_to_delete;
 
 QueueHandle_t	xSensor_Queue;
 
-TimerHandle_t	sensor_timer;
+
 
 TimerHandle_t	heartbeat_timer;
 
 EventGroupHandle_t	xSensor_Button_Event_Group;
+
+QueueHandle_t	xSensor_Queue_Ultrasonic;
+
 
 
 
@@ -40,13 +43,12 @@ void app_resources_init(void) {
 	if(!xSensor_Queue) {
 		print_error_uart();
 	}
+
 	heartbeat_timer = xTimerCreate("Heartbeat_Timer", pdMS_TO_TICKS(100), pdTRUE, (void*)0, vHeartbeat_Timer_Callback);
 
 	xTimerStartResult = xTimerStart(heartbeat_timer, 10);
 	configASSERT_RTOS(xTimerStartResult == pdPASS, "Failed to start Heartbeat Timer\n");
-	sensor_timer = xTimerCreate("Sensor_Timer", pdMS_TO_TICKS(2000), pdTRUE, (void *)1, vSensor_Timer_Callback);
-	xTimerStartResult = xTimerStart(sensor_timer, 10);
-	configASSERT_RTOS(xTimerStartResult == pdPASS, "Failed to start Sensor Timer\n");
+
 	xSensor_Button_Event_Group = xEventGroupCreate();
 	if(!xSensor_Button_Event_Group) {
 		print_error_uart();
@@ -55,15 +57,6 @@ void app_resources_init(void) {
 
 }
 
-void vSensor_Timer_Callback( TimerHandle_t xTimer ) {
-	TaskHandle_t sensor_task=  get_sensor_task_handle();
-	if(!sensor_task) {
-		print_error_uart();
-	}
-	xTaskNotifyGive(sensor_task);
-	xEventGroupSetBits(xSensor_Button_Event_Group, BIT_0);
-
-}
 
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer ) {
 	//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_14);

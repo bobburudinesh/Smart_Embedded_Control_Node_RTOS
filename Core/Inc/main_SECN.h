@@ -21,9 +21,11 @@
 #include "stdlib.h"
 #include "stdarg.h"
 #include "stdint.h"
+#include "stdbool.h"
 
 #include "error_handler.h"
 #include "debug_uart.h"
+#include "app_resources.h"
 
 
 #define TASK_STACK_SIZE		200

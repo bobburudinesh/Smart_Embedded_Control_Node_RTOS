@@ -55,15 +55,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-
-
-	if(htim->Instance == TIM7) {
-			__HAL_RCC_TIM7_CLK_ENABLE();
-			HAL_NVIC_SetPriority(TIM7_IRQn, 15, 0);
-			HAL_NVIC_EnableIRQ(TIM7_IRQn);
-		}
-}
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
 	if(htim->Instance == TIM2) {
 		__HAL_RCC_TIM2_CLK_ENABLE();
@@ -79,33 +70,20 @@ void HAL_TIM_IC_MspInit(TIM_HandleTypeDef *htim) {
 }
 
 
-void HAL_TIM_OC_MspInit(TIM_HandleTypeDef *htim) {
-	if(htim->Instance == TIM2) {
-		__HAL_RCC_TIM2_CLK_ENABLE();
-		__HAL_RCC_GPIOA_CLK_ENABLE();
-		GPIO_InitTypeDef	gpiox;
-		gpiox.Mode = GPIO_MODE_AF_PP;
-		gpiox.Alternate = GPIO_AF1_TIM2;
-		gpiox.Pin = GPIO_PIN_1;
-		HAL_GPIO_Init(GPIOA, &gpiox);
-		HAL_NVIC_SetPriority(TIM2_IRQn, 14, 0);
-		HAL_NVIC_EnableIRQ(TIM2_IRQn);
-	}
-}
 
-void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef *htim) {
-	if(htim->Instance == TIM2) {
-		__HAL_RCC_TIM2_CLK_ENABLE();
-		__HAL_RCC_GPIOA_CLK_ENABLE();
-		GPIO_InitTypeDef	gpiox;
-		gpiox.Mode = GPIO_MODE_AF_PP;
-		gpiox.Alternate = GPIO_AF1_TIM2;
-		gpiox.Pin = GPIO_PIN_1;
-		HAL_GPIO_Init(GPIOA, &gpiox);
-		HAL_NVIC_SetPriority(TIM2_IRQn, 14, 0);
-		HAL_NVIC_EnableIRQ(TIM2_IRQn);
-	}
-}
+//void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef *htim) {
+//	if(htim->Instance == TIM2) {
+//		__HAL_RCC_TIM2_CLK_ENABLE();
+//		__HAL_RCC_GPIOA_CLK_ENABLE();
+//		GPIO_InitTypeDef	gpiox;
+//		gpiox.Mode = GPIO_MODE_AF_PP;
+//		gpiox.Alternate = GPIO_AF1_TIM2;
+//		gpiox.Pin = GPIO_PIN_1;
+//		HAL_GPIO_Init(GPIOA, &gpiox);
+//		HAL_NVIC_SetPriority(TIM2_IRQn, 14, 0);
+//		HAL_NVIC_EnableIRQ(TIM2_IRQn);
+//	}
+//}
 
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc) {
 	RCC_OscInitTypeDef	oscInit;
