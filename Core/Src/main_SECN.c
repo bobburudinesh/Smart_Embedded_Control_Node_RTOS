@@ -10,7 +10,10 @@
 #include "led_task.h"
 #include "button_task.h"
 #include "app_resources.h"
+#include "sensor_task.h"
 #include "Activity_Monitor_Task.h"
+
+extern TIM_HandleTypeDef htim2;
 
 
 // Enable the Cycle count
@@ -29,7 +32,11 @@ double timer2_cnt_res=0;
 double user_signal_time_period =0;
 double user_signal_freq=0;
 
-
+bool highCapture = true;
+uint32_t risingedge_Value = 0;
+uint32_t fallingedge_value = 0;
+uint32_t pulse_Width_Counter_Difference = 0;
+uint8_t latest_distance = 0;
 int main(void) {
 
 	HAL_Init();
@@ -42,12 +49,13 @@ int main(void) {
 	    print_debug_msg("System restarted from WDT reset!\n");
 	    __HAL_RCC_CLEAR_RESET_FLAGS();
 	}
-	IWDGT_Init();
+	//IWDGT_Init();
 	app_resources_init();
 	led_task_init();
 	button_task_init();
 	sensor_task_init();
-	activity_Monitor_Task_Init();
+	//ultraSonic_Setup();
+	//activity_Monitor_Task_Init();
 	vTaskStartScheduler();
 
 }
@@ -157,12 +165,48 @@ void button_irq_handler(void) {
 }
 
 
-uint32_t get_PCK1(void) {
-	if(((RCC->CFGR >> 10) & 0x7) > 1) {
-		return HAL_RCC_GetPCLK1Freq()*2;
-	}
-	return HAL_RCC_GetPCLK1Freq();
+
+
+
+
+
+
+
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+	BaseType_t	higher_priority_task_woken = pdFALSE;
+	if(htim->Instance == TIM2) {
+		if(HAL_TIM_GetActiveChannel(&htim2) == HAL_TIM_ACTIVE_CHANNEL_2) {
+			if(highCapture) {
+				// Read Capture Compare Register Value when rising edge of pulse is received
+				risingedge_Value = HAL_TIM_ReadCapturedValue(&htim2, TIM_CHANNEL_2);
+				highCapture = false;
+				__HAL_TIM_SET_CAPTUREPOLARITY(&htim2, TIM_CHANNEL_2, TIM_ICPOLARITY_FALLING);
+			} else {
+				// Read Capture Compare Register Value when falling edge of pulse is received
+				fallingedge_value = HAL_TIM_ReadCapturedValue(&htim2, TIM_CHANNEL_2);
+				__HAL_TIM_SET_COUNTER(&htim2, 0);
+				if(fallingedge_value > risingedge_Value) {
+					pulse_Width_Counter_Difference = fallingedge_value - risingedge_Value;
+				} else {
+					pulse_Width_Counter_Difference = (0xFFFF - risingedge_Value) + fallingedge_value;
+				}
+				// Assuming TIM2 clock is 42 MHz, speed of sound is 340 m/s or 34000 cm/s
+				float time_in_seconds = pulse_Width_Counter_Difference / 42000000.0;
+				latest_distance = (time_in_seconds * 34000) / 2;
+				vTaskNotifyGiveIndexedFromISR(get_sensor_task_handle(),(UBaseType_t)0, &higher_priority_task_woken);
+				portYIELD_FROM_ISR(higher_priority_task_woken);
+				vTaskNotifyGiveIndexedFromISR(get_buzzer_task_handle(),(UBaseType_t)0, &higher_priority_task_woken);
+				portYIELD_FROM_ISR(higher_priority_task_woken);
+				highCapture = true;
+				__HAL_TIM_SET_CAPTUREPOLARITY(&htim2, TIM_CHANNEL_2, TIM_ICPOLARITY_RISING);
+				__HAL_TIM_DISABLE_IT(&htim2, TIM_IT_CC2);
+			}
+			}
+		}
 }
+
+
 
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName) {
@@ -184,5 +228,4 @@ void BusFault_Handler(void) {
 void UsageFault_Handler(void) {
 	while(1);
 }
-
 

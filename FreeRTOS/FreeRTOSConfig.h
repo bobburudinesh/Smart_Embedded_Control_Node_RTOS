@@ -130,7 +130,7 @@ standard names. */
 /*
  * Low Power Mode and Tickless Idle
  * */
-#define configUSE_TICKLESS_IDLE	1
+#define configUSE_TICKLESS_IDLE	0
 #define configEXPECTED_IDLE_TIME_BEFORE_SLEEP	20
 #define USE_SEGGER_SYSVIEW 1  // Enable tracing if set to 1: FOR SEGGER VIEW
 

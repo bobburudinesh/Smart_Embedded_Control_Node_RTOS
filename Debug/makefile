@@ -11,6 +11,7 @@ RM := rm -rf
 -include sources.mk
 -include Utils/Src/subdir.mk
 -include Tasks/Src/subdir.mk
+-include Sensors/Src/subdir.mk
 -include SEGGER/SEGGER/Syscalls/subdir.mk
 -include SEGGER/SEGGER/subdir.mk
 -include SEGGER/Rec/subdir.mk

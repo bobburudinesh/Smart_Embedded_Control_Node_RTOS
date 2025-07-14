@@ -33,6 +33,7 @@ SEGGER/OS \
 SEGGER/Rec \
 SEGGER/SEGGER \
 SEGGER/SEGGER/Syscalls \
+Sensors/Src \
 Tasks/Src \
 Utils/Src \
 

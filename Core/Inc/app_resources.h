@@ -23,6 +23,9 @@ typedef enum {
 	Button_Task
 }Tasks_t;
 
+extern Tasks_t current_task;
+
+
 typedef enum {
 	SYS_STATE_INIT = 0,
 	SYS_STATE_RUNNING,
@@ -42,13 +45,14 @@ extern TaskHandle_t next_task_to_delete;
 
 extern EventGroupHandle_t	xSensor_Button_Event_Group;
 
+extern QueueHandle_t	xSensor_Queue_Ultrasonic;
+
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
-void vSensor_Timer_Callback( TimerHandle_t xTimer );
 
 
 
 
-extern Tasks_t current_task;
+
 
 
 
