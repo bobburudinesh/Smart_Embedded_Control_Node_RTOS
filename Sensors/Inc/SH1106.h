@@ -62,7 +62,7 @@
 #define SH1106_MAX_PAGES						8
 #define SH1106_MAX_SEGMENTS						132
 #define SH1106_MAX_CHARACTERS_IN_PAGE			((uint8_t)(SH1106_MAX_SEGMENTS/(SH1106_NO_OF_SEGMENTS_PER_CHARACTER + SH1106_NO_OF_SEGMENTS_PER_LETTER_GAP)))
-
+#define SH1106_WRITE_BUFFER_SIZE				(SH1106_MAX_SEGMENTS + 1)
 
 
 
@@ -84,7 +84,8 @@ SH1106_STATUS SH1106_Send_Command_Double_Byte(uint8_t command1, uint8_t command2
 SH1106_STATUS SH1106_Send_Display_Data(uint8_t *data, uint8_t len);
 
 
-
+SH1106_STATUS SH1106_Clear_Display(void);
+SH1106_STATUS	SH1106_Go_To_Next_Line(void);
 SH1106_STATUS SH1106_Set_Cursor(uint8_t x, uint8_t y);
 
 #endif /* INC_SH1106_H_ */
