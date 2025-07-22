@@ -12,6 +12,8 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "string.h"
+#include "stm32f4xx_hal.h"
+//#include "i2c.h"
 
 #define SH1106_ADDRESS							0x3C
 #define SH1106_ADDRESS_READ						((0x3C << 1) | 0x01)
@@ -31,7 +33,7 @@
 #define SH1106_COMMAND_CONTRAST_MODE_SET		0x81
 #define SH1106_COMMAND_CONTRAST_REGISTER		0x00
 
-#define SH1106_COMMAND_DISPLAY_ON				0xA4
+#define SH1106_COMMAND_DISPLAY_OFF				0xA4
 #define SH1106_COMMAND_DISPLAY_ON				0xA5
 
 #define SH1106_COMMAND_DISPLAY_NORMAL			0xA6
@@ -50,6 +52,22 @@
 
 #define SH1106_COMMAND_NOP						0xE3
 
+
+#define SH1106_NO_OF_LINES_PER_PAGE				8
+#define SH1106_NO_OF_SEGMENTS_PER_CHARACTER		5
+#define SH1106_NO_OF_SEGMENTS_PER_LETTER_GAP    1
+
+
+#define SH1106_MAX_LINES						64
+#define SH1106_MAX_PAGES						8
+#define SH1106_MAX_SEGMENTS						132
+#define SH1106_MAX_CHARACTERS_IN_PAGE			((uint8_t)(SH1106_MAX_SEGMENTS/(SH1106_NO_OF_SEGMENTS_PER_CHARACTER + SH1106_NO_OF_SEGMENTS_PER_LETTER_GAP)))
+
+
+
+
+
+
 typedef enum {
 	SH1106_STATUS_ERROR = 0,
 	SH1106_STATUS_OK
@@ -59,7 +77,7 @@ typedef struct {
  I2C_HandleTypeDef	i2c;
 } SH1106_I2C_Handle;
 
-SH1106_STATUS SH1106_I2C_INIT(void);
+SH1106_STATUS SH1106_I2C_INIT(I2C_HandleTypeDef	i2c, bool vertical_scroll_enable);
 
 SH1106_STATUS SH1106_Send_Command_Single_Byte(uint8_t command);
 SH1106_STATUS SH1106_Send_Command_Double_Byte(uint8_t command1, uint8_t command2);
@@ -67,6 +85,6 @@ SH1106_STATUS SH1106_Send_Display_Data(uint8_t *data, uint8_t len);
 
 
 
-
+SH1106_STATUS SH1106_Set_Cursor(uint8_t x, uint8_t y);
 
 #endif /* INC_SH1106_H_ */
