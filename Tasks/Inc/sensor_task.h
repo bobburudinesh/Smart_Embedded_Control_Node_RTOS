@@ -8,6 +8,14 @@
 #ifndef INC_SENSOR_TASK_H_
 #define INC_SENSOR_TASK_H_
 
+#include "app_resources.h"
+#include "ring_buffer.h"
+#include "uart_async.h"
+#include "stdbool.h"
+void sensor_uart_isr_hook(uart_async_t *aUart, BaseType_t *highPriorityTaskWoken);
+/*
+//TODO: Refactor*************LEGACY
+
 void sensor_task_init(void);
 
 void v_sensor_task(void *pvParamerter);
@@ -17,5 +25,7 @@ void vSensor_Timer_Callback( TimerHandle_t xTimer );
 
 TaskHandle_t get_sensor_task_handle(void);
 TaskHandle_t get_buzzer_task_handle(void);
+
+*/
 
 #endif /* INC_SENSOR_TASK_H_ */

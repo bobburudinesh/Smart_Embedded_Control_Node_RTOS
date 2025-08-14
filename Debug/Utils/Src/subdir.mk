@@ -7,17 +7,23 @@
 C_SRCS += \
 ../Utils/Src/debug_uart.c \
 ../Utils/Src/error_handler.c \
-../Utils/Src/tickless_rtc.c 
+../Utils/Src/ring_buffer.c \
+../Utils/Src/tickless_rtc.c \
+../Utils/Src/uart_async.c 
 
 OBJS += \
 ./Utils/Src/debug_uart.o \
 ./Utils/Src/error_handler.o \
-./Utils/Src/tickless_rtc.o 
+./Utils/Src/ring_buffer.o \
+./Utils/Src/tickless_rtc.o \
+./Utils/Src/uart_async.o 
 
 C_DEPS += \
 ./Utils/Src/debug_uart.d \
 ./Utils/Src/error_handler.d \
-./Utils/Src/tickless_rtc.d 
+./Utils/Src/ring_buffer.d \
+./Utils/Src/tickless_rtc.d \
+./Utils/Src/uart_async.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +33,7 @@ Utils/Src/%.o Utils/Src/%.su Utils/Src/%.cyclo: ../Utils/Src/%.c Utils/Src/subdi
 clean: clean-Utils-2f-Src
 
 clean-Utils-2f-Src:
-	-$(RM) ./Utils/Src/debug_uart.cyclo ./Utils/Src/debug_uart.d ./Utils/Src/debug_uart.o ./Utils/Src/debug_uart.su ./Utils/Src/error_handler.cyclo ./Utils/Src/error_handler.d ./Utils/Src/error_handler.o ./Utils/Src/error_handler.su ./Utils/Src/tickless_rtc.cyclo ./Utils/Src/tickless_rtc.d ./Utils/Src/tickless_rtc.o ./Utils/Src/tickless_rtc.su
+	-$(RM) ./Utils/Src/debug_uart.cyclo ./Utils/Src/debug_uart.d ./Utils/Src/debug_uart.o ./Utils/Src/debug_uart.su ./Utils/Src/error_handler.cyclo ./Utils/Src/error_handler.d ./Utils/Src/error_handler.o ./Utils/Src/error_handler.su ./Utils/Src/ring_buffer.cyclo ./Utils/Src/ring_buffer.d ./Utils/Src/ring_buffer.o ./Utils/Src/ring_buffer.su ./Utils/Src/tickless_rtc.cyclo ./Utils/Src/tickless_rtc.d ./Utils/Src/tickless_rtc.o ./Utils/Src/tickless_rtc.su ./Utils/Src/uart_async.cyclo ./Utils/Src/uart_async.d ./Utils/Src/uart_async.o ./Utils/Src/uart_async.su
 
 .PHONY: clean-Utils-2f-Src
 

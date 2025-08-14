@@ -5,6 +5,79 @@
  *      Author: Dinesh Bobburu
  */
 
+
+#include "uart_async.h"
+#include "sensor_task.h"
+
+uart_async_t sensor_uart_async;
+#define MAX_MESSAGE_MS		150
+void sensor_task(void *args) {
+
+	uart_async_init(&sensor_uart_async, &huart1_sensor);
+	uart_async_enable_irqs(&sensor_uart_async);
+	TickType_t currentTime = xTaskGetTickCount();
+	TickType_t next_sample_time = currentTime + pdMS_TO_TICKS(100);	// 100 ms
+	uint8_t line[256]; // scraping line for emptying space in ring buf
+	uint8_t last_stable_line[256] = {0}; // last stable line
+	uint32_t last_stable_line_tc = 0;	// last stable line time stamp
+	uint32_t last_sent_ts = 0;			// time stamp of last sent line
+	bool have_last = false;
+
+
+
+	while(1) {
+		TickType_t now = xTaskGetTickCount();
+		TickType_t timeout = (next_sample_time > now) ? next_sample_time - now : 0;
+		xSemaphoreTake(sensor_uart_async.uart_semaHandle, timeout);
+		bool is_CheckSum_OK = false;
+		// Drain everything in current ring.
+		while(uart_async_getline(&sensor_uart_async, line, (uint16_t)sizeof(line), &is_CheckSum_OK)) {
+			if(is_CheckSum_OK) {
+				strncpy(last_stable_line, line, sizeof(last_stable_line)-1);
+				last_stable_line_tc = xTaskGetTickCount();
+				have_last = true;
+
+			} else {
+				// bad checksum ignore
+			}
+		}
+		now = xTaskGetTickCount();
+		if(now >= next_sample_time) {
+			// post it to queue TODO: this will be handled
+			uint32_t publish_ts = now;
+			bool new_since_last = have_last & (last_stable_line > last_sent_ts);
+			uint32_t age = new_since_last ? (publish_ts - last_sent_ts) : 0xFFFFFFFFU;
+			if(new_since_last && age <= MAX_MESSAGE_MS) {
+
+			}
+			next_sample_time = xTaskGetTickCount() + + pdMS_TO_TICKS(100);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// TODO: ****************** LEGACY*********************8
+
+/*
 #include "main_SECN.h"
 #include "app_resources.h"
 #include "sensor_task.h"
@@ -147,4 +220,4 @@ void vSensor_Timer_Callback( TimerHandle_t xTimer ) {
 	distance_Read();
 
 }
-
+*/

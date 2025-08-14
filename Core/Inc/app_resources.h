@@ -8,12 +8,52 @@
 #ifndef INC_APP_RESOURCES_H_
 #define INC_APP_RESOURCES_H_
 
-#include "main_SECN.h"
 
+#include "stm32f4xx_hal.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "timers.h"
+#include "semphr.h"
+#include "event_groups.h"
+
+#include"string.h"
+#include"stdio.h"
+#include "stdlib.h"
+#include "stdarg.h"
+#include "stdint.h"
+#include "stdbool.h"
 
 #define BIT_0	( 1 << 0 )
 #define BIT_1	( 1 << 1 )
+
+
+#define DEBUG_ENABLE		1U
+
+#if DEBUG_ENABLE
+#define DEBUG_UART_PORT		UART3
+#define SEGGER_SYSTEM_VIEW_UART_PORT	UART2
+#endif
+
+#define SENSOR_UART_PORT	UART1
+#define MODEM_UART_PORT		UART6
+#define SENSOR_TASK_PRIO	(tskIDLE_PRIORITY + 3)
+#define MODEM_TASK_PRIO		(tskIDLE_PRIORITY + 3)
+#define LOGGER_TASK_PRIO	(tskIDLE_PRIORITY + 2)
+#define CRYPTO_TASK_PRIO	(tskIDLE_PRIORITY + 2)
+#define OTA_TASK_PRIO		(tskIDLE_PRIORITY + 1)
+#define SYSTEM_TASK_PRIO	(tskIDLE_PRIORITY + 4)
+
+#define LOGGER_QUEUE_LEN		(32)
+#define MODEM_QUEUE_LEN			(16)
+#define CRYPTO_QUEUE_LEN		(16)
+
+#define SENSOR_POLL_PERIOD_MS		(1000)
+
+#define RINGBUF_SZ				(1024)
+
+#define LINEBUF_SZ				(256)
 
 
 typedef enum {
@@ -23,15 +63,60 @@ typedef enum {
 	Button_Task
 }Tasks_t;
 
-extern Tasks_t current_task;
-
-
 typedef enum {
 	SYS_STATE_INIT = 0,
 	SYS_STATE_RUNNING,
 	SYS_STATE_ERROR,
 	SYS_STATE_RESET
 } system_state_t;
+
+typedef enum {
+	MSG_SENSOR_SAMPLE,
+	MSG_LOG_PACKET,
+	MSG_CRYPTO_ENCRYPT_REQ,
+	MSG_CRYPTO_ENCRYPTED,
+	MSG_SYSTEM_HEARTBEAT
+} msg_type_t;
+
+typedef struct {
+	uint8_t valA;
+	uint8_t valB;
+	uint8_t valC;
+} sensor_packet_t;
+
+typedef struct {
+	uint32_t time_stamp;
+	sensor_packet_t sensor;
+	uint8_t system_health;
+	uint8_t payload[128];
+	uint16_t payload_len;
+} log_packet_t;
+
+typedef struct {
+	uint32_t ts_ms;
+	uint8_t buf[256];
+	uint16_t len;
+} tx_payload_t;
+
+typedef struct {
+	uint32_t corr_id;
+	uint8_t in[256];
+	uint16_t in_len;
+} crypto_encrypt_req_t;
+
+typedef struct {
+	uint32_t corr_id;
+	uint8_t out[256];
+	uint16_t out_len;
+	uint8_t status;
+} crypto_encrypt_resp_t;
+
+extern QueueHandle_t qLoggerIn;
+extern QueueHandle_t qModemIn;
+extern QueueHandle_t qCryptoIn;
+
+extern UART_HandleTypeDef huart1_sensor;
+extern UART_HandleTypeDef huart6_modem;
 
 
 
