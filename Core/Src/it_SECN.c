@@ -29,9 +29,8 @@ void USART3_IRQHandler(void) {
 
 void USART1_IRQHandler(void) {
 	BaseType_t highPriorityTaskWoken = pdFALSE;
-	if(__HAL_UART_GET_FLAG(&huart1_sensor, UART_FLAG_RXNE)) {
-			uart_async_isr_byte(&sensor_uart_async, &highPriorityTaskWoken);
-	}
+	uart_async_isr_byte(&sensor_uart_async, &highPriorityTaskWoken);
+    HAL_UART_IRQHandler(&huart1_sensor);
 	portYIELD_FROM_ISR(highPriorityTaskWoken);
 }
 

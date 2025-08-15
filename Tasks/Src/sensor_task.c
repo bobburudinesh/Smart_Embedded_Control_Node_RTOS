@@ -10,7 +10,7 @@
 #include "sensor_task.h"
 
 uart_async_t sensor_uart_async;
-#define MAX_MESSAGE_MS		150
+#define MAX_MESSAGE_AGE_MS		150
 void sensor_task(void *args) {
 
 	uart_async_init(&sensor_uart_async, &huart1_sensor);
@@ -45,12 +45,22 @@ void sensor_task(void *args) {
 		if(now >= next_sample_time) {
 			// post it to queue TODO: this will be handled
 			uint32_t publish_ts = now;
-			bool new_since_last = have_last & (last_stable_line > last_sent_ts);
+			bool new_since_last = have_last & (last_stable_line_tc > last_sent_ts);
 			uint32_t age = new_since_last ? (publish_ts - last_sent_ts) : 0xFFFFFFFFU;
-			if(new_since_last && age <= MAX_MESSAGE_MS) {
-
+			sensor_data_t staged_line = {0};
+			staged_line.msg_type = MSG_SENSOR_SAMPLE;
+			staged_line.age_ms = age;
+			if(new_since_last && age <= MAX_MESSAGE_AGE_MS) {
+				strncpy(staged_line.line, (char*)last_stable_line, (sizeof(staged_line.line))-1);
+			    staged_line.line[sizeof(staged_line.line)-1] = '\0';
+			} else {
+				// LOG error packet
+				staged_line.line[0] = '\0';
 			}
-			next_sample_time = xTaskGetTickCount() + + pdMS_TO_TICKS(100);
+			if(xQueueSend(qSensorToLogger, &staged_line, 0) != pdTRUE) {
+				//TODO: Handle queue error
+			}
+			next_sample_time += pdMS_TO_TICKS(100);
 		}
 	}
 }

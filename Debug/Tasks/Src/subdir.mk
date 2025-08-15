@@ -6,16 +6,22 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Tasks/Src/Activity_Monitor_Task.c \
+../Tasks/Src/crypto_task.c \
+../Tasks/Src/logger_task.c \
 ../Tasks/Src/oled_display_task.c \
 ../Tasks/Src/sensor_task.c 
 
 OBJS += \
 ./Tasks/Src/Activity_Monitor_Task.o \
+./Tasks/Src/crypto_task.o \
+./Tasks/Src/logger_task.o \
 ./Tasks/Src/oled_display_task.o \
 ./Tasks/Src/sensor_task.o 
 
 C_DEPS += \
 ./Tasks/Src/Activity_Monitor_Task.d \
+./Tasks/Src/crypto_task.d \
+./Tasks/Src/logger_task.d \
 ./Tasks/Src/oled_display_task.d \
 ./Tasks/Src/sensor_task.d 
 
@@ -27,7 +33,7 @@ Tasks/Src/%.o Tasks/Src/%.su Tasks/Src/%.cyclo: ../Tasks/Src/%.c Tasks/Src/subdi
 clean: clean-Tasks-2f-Src
 
 clean-Tasks-2f-Src:
-	-$(RM) ./Tasks/Src/Activity_Monitor_Task.cyclo ./Tasks/Src/Activity_Monitor_Task.d ./Tasks/Src/Activity_Monitor_Task.o ./Tasks/Src/Activity_Monitor_Task.su ./Tasks/Src/oled_display_task.cyclo ./Tasks/Src/oled_display_task.d ./Tasks/Src/oled_display_task.o ./Tasks/Src/oled_display_task.su ./Tasks/Src/sensor_task.cyclo ./Tasks/Src/sensor_task.d ./Tasks/Src/sensor_task.o ./Tasks/Src/sensor_task.su
+	-$(RM) ./Tasks/Src/Activity_Monitor_Task.cyclo ./Tasks/Src/Activity_Monitor_Task.d ./Tasks/Src/Activity_Monitor_Task.o ./Tasks/Src/Activity_Monitor_Task.su ./Tasks/Src/crypto_task.cyclo ./Tasks/Src/crypto_task.d ./Tasks/Src/crypto_task.o ./Tasks/Src/crypto_task.su ./Tasks/Src/logger_task.cyclo ./Tasks/Src/logger_task.d ./Tasks/Src/logger_task.o ./Tasks/Src/logger_task.su ./Tasks/Src/oled_display_task.cyclo ./Tasks/Src/oled_display_task.d ./Tasks/Src/oled_display_task.o ./Tasks/Src/oled_display_task.su ./Tasks/Src/sensor_task.cyclo ./Tasks/Src/sensor_task.d ./Tasks/Src/sensor_task.o ./Tasks/Src/sensor_task.su
 
 .PHONY: clean-Tasks-2f-Src
 

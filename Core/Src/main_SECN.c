@@ -17,12 +17,16 @@
 #include "app_resources.h"
 
 extern TIM_HandleTypeDef htim2;
-QueueHandle_t qLoggerIn;
-QueueHandle_t qModemIn;
-QueueHandle_t qCryptoIn;
+
+
+QueueHandle_t qSensorToLogger;
+QueueHandle_t qLoggerToCrypto;
+QueueHandle_t qCryptoToModem;
 
 UART_HandleTypeDef huart1_sensor;
 UART_HandleTypeDef huart6_modem;
+
+
 
 
 // Enable the Cycle count
@@ -34,9 +38,19 @@ void SystemClock_Config(void);
 extern  void SEGGER_UART_init(uint32_t);
 #endif
 
+
+
+
 int main(void) {
 	HAL_Init();
 	SystemClock_Config();
+
+	qSensorToLogger = xQueueCreate(32, sizeof(sensor_data_t));
+	qLoggerToCrypto = xQueueCreate(16, sizeof(logger_packet_t));
+	qCryptoToModem = xQueueCreate(16, sizeof(tx_payload_t));
+
+
+
 
 }
 

@@ -23,13 +23,16 @@ void uart_async_init(uart_async_t *aUart, UART_HandleTypeDef *huart) {
 	ringbuffer_Init(&aUart->ring_buf, aUart->buffer, RINGBUF_SZ);
 }
 void uart_async_isr_byte(uart_async_t *aUart, BaseType_t *highPriorityTaskWoken) {
-	USART_TypeDef *hUartInstance = aUart->huart->Instance;
-	volatile uint32_t SR = hUartInstance->SR; // read SR then DR that will clear RXNE.
-	uint8_t c = (uint8_t)(hUartInstance->DR & 0xFF);
-	ringbuffer_push_isr(&aUart->ring_buf, c);
-	if(c == '\n') {// End of Line from sensor
-		xSemaphoreGiveFromISR(aUart->uart_semaHandle, highPriorityTaskWoken);
+	if(__HAL_UART_GET_FLAG(&huart1_sensor, UART_FLAG_RXNE)) {
+		USART_TypeDef *hUartInstance = aUart->huart->Instance;
+		volatile uint32_t SR = hUartInstance->SR; // read SR then DR that will clear RXNE.
+		uint8_t c = (uint8_t)(hUartInstance->DR & 0xFF);
+		ringbuffer_push_isr(&aUart->ring_buf, c);
+		if(c == '\n') {// End of Line from sensor
+			xSemaphoreGiveFromISR(aUart->uart_semaHandle, highPriorityTaskWoken);
+		}
 	}
+
 	if (__HAL_UART_GET_FLAG(&huart1_sensor, UART_FLAG_IDLE)) {
 	        __HAL_UART_CLEAR_IDLEFLAG(&huart1_sensor);
 	        xSemaphoreGiveFromISR(aUart->uart_semaHandle, highPriorityTaskWoken);
@@ -58,7 +61,7 @@ static bool compute_checksum_gps_sensor(uint8_t *data) {
 }
 bool uart_async_getline(uart_async_t *aUart, uint8_t *buf, uint16_t maxSize, bool *checksum_OK) {
 	uint8_t c;
-	if(*checksum_OK) {*checksum_OK = false;}
+	*checksum_OK = false;
 	while(ringbuffer_pop(&aUart->ring_buf, &c)) {
 		switch(aUart->asm_state) {
 		case WAIT_DOLLAR:

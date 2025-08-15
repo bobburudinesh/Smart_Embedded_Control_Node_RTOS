@@ -1,4 +1,3 @@
-"./Core/Src/app_resources.o"
 "./Core/Src/it_SECN.o"
 "./Core/Src/main_SECN.o"
 "./Core/Src/msp_SECN.o"
@@ -48,6 +47,8 @@
 "./Sensors/Src/SH1106.o"
 "./Sensors/Src/SR04.o"
 "./Tasks/Src/Activity_Monitor_Task.o"
+"./Tasks/Src/crypto_task.o"
+"./Tasks/Src/logger_task.o"
 "./Tasks/Src/oled_display_task.o"
 "./Tasks/Src/sensor_task.o"
 "./Utils/Src/debug_uart.o"

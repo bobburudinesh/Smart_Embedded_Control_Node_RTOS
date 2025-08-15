@@ -8,7 +8,7 @@
 #ifndef INC_APP_RESOURCES_H_
 #define INC_APP_RESOURCES_H_
 
-
+#pragma once
 #include "stm32f4xx_hal.h"
 
 #include "FreeRTOS.h"
@@ -49,7 +49,7 @@
 #define MODEM_QUEUE_LEN			(16)
 #define CRYPTO_QUEUE_LEN		(16)
 
-#define SENSOR_POLL_PERIOD_MS		(1000)
+#define SENSOR_POLL_PERIOD_MS		(pdMS_TO_TICKS(1000))
 
 #define RINGBUF_SZ				(1024)
 
@@ -75,26 +75,26 @@ typedef enum {
 	MSG_LOG_PACKET,
 	MSG_CRYPTO_ENCRYPT_REQ,
 	MSG_CRYPTO_ENCRYPTED,
-	MSG_SYSTEM_HEARTBEAT
+	MSG_SYSTEM_HEARTBEAT,
+
+	MSG_LIMIT_EXCEDDED = 65535
 } msg_type_t;
 
 typedef struct {
-	uint8_t valA;
-	uint8_t valB;
-	uint8_t valC;
-} sensor_packet_t;
+	uint32_t age_ms;
+	char line[LINEBUF_SZ];	//TODO: make dynamic length sensor buffer
+	uint16_t msg_type;
+} sensor_data_t;
 
 typedef struct {
-	uint32_t time_stamp;
-	sensor_packet_t sensor;
-	uint8_t system_health;
-	uint8_t payload[128];
+	uint32_t age_ms;
+	uint8_t payload[LINEBUF_SZ+8];
 	uint16_t payload_len;
-} log_packet_t;
+} logger_packet_t;
 
 typedef struct {
-	uint32_t ts_ms;
-	uint8_t buf[256];
+	uint32_t age_ms;
+	uint8_t buf[LINEBUF_SZ+32];
 	uint16_t len;
 } tx_payload_t;
 
@@ -111,15 +111,17 @@ typedef struct {
 	uint8_t status;
 } crypto_encrypt_resp_t;
 
-extern QueueHandle_t qLoggerIn;
-extern QueueHandle_t qModemIn;
-extern QueueHandle_t qCryptoIn;
+
+extern QueueHandle_t qSensorToLogger;
+extern QueueHandle_t qLoggerToCrypto;
+extern QueueHandle_t qCryptoToModem;
 
 extern UART_HandleTypeDef huart1_sensor;
 extern UART_HandleTypeDef huart6_modem;
 
+static inline uint32_t ms_now(void) {return (uint32_t)(xTaskGetTickCount()*portTICK_PERIOD_MS);}
 
-
+/*
 void app_resources_init(void);
 
 extern SemaphoreHandle_t	xbutton_Sema;
@@ -135,7 +137,7 @@ extern QueueHandle_t	xSensor_Queue_Ultrasonic;
 void vHeartbeat_Timer_Callback( TimerHandle_t xTimer );
 
 
-
+*/
 
 
 
