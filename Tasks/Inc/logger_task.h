@@ -10,4 +10,6 @@
 
 #include "app_resources.h"
 
+void logger_task(void *arg);
+
 #endif /* INC_LOGGER_TASK_H_ */

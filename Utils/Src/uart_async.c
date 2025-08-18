@@ -117,3 +117,5 @@ void uart_async_enable_irqs(uart_async_t *aUart){
     __HAL_UART_ENABLE_IT(aUart->huart, UART_IT_RXNE);
     __HAL_UART_ENABLE_IT(aUart->huart, UART_IT_IDLE);
 }
+
+

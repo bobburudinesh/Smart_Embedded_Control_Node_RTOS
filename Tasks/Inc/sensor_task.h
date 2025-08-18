@@ -13,6 +13,7 @@
 #include "uart_async.h"
 #include "stdbool.h"
 void sensor_uart_isr_hook(uart_async_t *aUart, BaseType_t *highPriorityTaskWoken);
+void sensor_task(void *args);
 /*
 //TODO: Refactor*************LEGACY
 

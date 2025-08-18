@@ -8,18 +8,21 @@
 
 #include "uart_async.h"
 #include "sensor_task.h"
+#include "debug_uart.h"
 
 uart_async_t sensor_uart_async;
 #define MAX_MESSAGE_AGE_MS		150
 void sensor_task(void *args) {
 
 	uart_async_init(&sensor_uart_async, &huart1_sensor);
+	if(!sensor_uart_async.uart_semaHandle) LOGE("sensor UART sem NULL");
 	uart_async_enable_irqs(&sensor_uart_async);
+	LOGI("Sensir UART async init OK");
 	TickType_t currentTime = xTaskGetTickCount();
 	TickType_t next_sample_time = currentTime + pdMS_TO_TICKS(100);	// 100 ms
 	uint8_t line[256]; // scraping line for emptying space in ring buf
 	uint8_t last_stable_line[256] = {0}; // last stable line
-	uint32_t last_stable_line_tc = 0;	// last stable line time stamp
+	uint32_t last_stable_line_ts = 0;	// last stable line time stamp
 	uint32_t last_sent_ts = 0;			// time stamp of last sent line
 	bool have_last = false;
 
@@ -28,13 +31,13 @@ void sensor_task(void *args) {
 	while(1) {
 		TickType_t now = xTaskGetTickCount();
 		TickType_t timeout = (next_sample_time > now) ? next_sample_time - now : 0;
-		xSemaphoreTake(sensor_uart_async.uart_semaHandle, timeout);
+		xSemaphoreTake(sensor_uart_async.uart_semaHandle, timeout);// wait for data to be put on sensor.
 		bool is_CheckSum_OK = false;
 		// Drain everything in current ring.
 		while(uart_async_getline(&sensor_uart_async, line, (uint16_t)sizeof(line), &is_CheckSum_OK)) {
 			if(is_CheckSum_OK) {
-				strncpy(last_stable_line, line, sizeof(last_stable_line)-1);
-				last_stable_line_tc = xTaskGetTickCount();
+				strncpy((char*)last_stable_line, (char*)line, sizeof(last_stable_line)-1);
+				last_stable_line_ts = ms_now();
 				have_last = true;
 
 			} else {
@@ -44,8 +47,8 @@ void sensor_task(void *args) {
 		now = xTaskGetTickCount();
 		if(now >= next_sample_time) {
 			// post it to queue TODO: this will be handled
-			uint32_t publish_ts = now;
-			bool new_since_last = have_last & (last_stable_line_tc > last_sent_ts);
+			uint32_t publish_ts = ms_now();
+			bool new_since_last = have_last & (last_stable_line_ts > last_sent_ts);
 			uint32_t age = new_since_last ? (publish_ts - last_sent_ts) : 0xFFFFFFFFU;
 			sensor_data_t staged_line = {0};
 			staged_line.msg_type = MSG_SENSOR_SAMPLE;
@@ -55,10 +58,24 @@ void sensor_task(void *args) {
 			    staged_line.line[sizeof(staged_line.line)-1] = '\0';
 			} else {
 				// LOG error packet
-				staged_line.line[0] = '\0';
+				staged_line.line[0] = 0;
 			}
-			if(xQueueSend(qSensorToLogger, &staged_line, 0) != pdTRUE) {
+			if(xQueueSend(qSensorToLogger, &staged_line, 0) == pdTRUE) {
+				if(new_since_last) {
+					last_sent_ts = last_stable_line_ts;
+				}
+			} else {
 				//TODO: Handle queue error
+				uart_async_t trash;
+
+				(void) xQueueReceive(qSensorToLogger, &trash, 0);
+				if (xQueueSend(qSensorToLogger, &staged_line, 0) == pdTRUE) {
+					if(new_since_last) {
+						last_sent_ts = last_stable_line_ts;
+					}
+				 } else {
+					 LOGW("qSensorToLogger still full (drop)");
+				 }
 			}
 			next_sample_time += pdMS_TO_TICKS(100);
 		}
@@ -231,3 +248,5 @@ void vSensor_Timer_Callback( TimerHandle_t xTimer ) {
 
 }
 */
+
+

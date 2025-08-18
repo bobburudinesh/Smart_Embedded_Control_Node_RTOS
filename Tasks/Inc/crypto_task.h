@@ -20,7 +20,8 @@ void crypto_task(void *args) {
 			// TODO: Handle Cryptography
 
 			encrypted_payload.age_ms = raw_payload.age_ms;
-			encrypted_payload.buf = raw_payload.payload;
+			strncpy((char*)encrypted_payload.buf, (char*)raw_payload.payload, raw_payload.payload_len);
+
 			encrypted_payload.len = raw_payload.payload_len;
 
 			if(xQueueSend(qCryptoToModem, &encrypted_payload, 0) != pdTRUE) {

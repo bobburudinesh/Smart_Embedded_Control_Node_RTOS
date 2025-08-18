@@ -49,6 +49,7 @@
 "./Tasks/Src/Activity_Monitor_Task.o"
 "./Tasks/Src/crypto_task.o"
 "./Tasks/Src/logger_task.o"
+"./Tasks/Src/modem_task.o"
 "./Tasks/Src/oled_display_task.o"
 "./Tasks/Src/sensor_task.o"
 "./Utils/Src/debug_uart.o"

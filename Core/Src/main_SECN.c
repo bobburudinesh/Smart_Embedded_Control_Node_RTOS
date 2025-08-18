@@ -15,6 +15,12 @@
 */
 #include "main_SECN.h"
 #include "app_resources.h"
+#include "sensor_task.h"
+#include "logger_task.h"
+#include "crypto_task.h"
+#include "modem_task.h"
+#include "debug_uart.h"
+
 
 extern TIM_HandleTypeDef htim2;
 
@@ -43,7 +49,12 @@ extern  void SEGGER_UART_init(uint32_t);
 
 int main(void) {
 	HAL_Init();
+
 	SystemClock_Config();
+
+	uart_debug_init();
+	uart_sensor_init();
+	uart_modem_init();
 
 	qSensorToLogger = xQueueCreate(32, sizeof(sensor_data_t));
 	qLoggerToCrypto = xQueueCreate(16, sizeof(logger_packet_t));
@@ -122,7 +133,35 @@ void UsageFault_Handler(void) {
 }
 
 
+void uart_sensor_init(void) {
+	huart1_sensor.Instance = USART1;
+	huart1_sensor.Init.BaudRate = 9600;
+	huart1_sensor.Init.StopBits = UART_STOPBITS_1;
+	huart1_sensor.Init.WordLength = UART_WORDLENGTH_8B;
+	huart1_sensor.Init.Parity = UART_PARITY_NONE;
+	huart1_sensor.Init.Mode = UART_MODE_TX_RX;
+	if(HAL_UART_Init(&huart1_sensor) != HAL_OK) {
+		//TODO: Handle error
+		while(1);
+	}
 
+}
+
+
+void uart_modem_init(void) {
+
+	huart6_modem.Instance = USART6;
+	huart6_modem.Init.BaudRate = 9600;
+	huart6_modem.Init.StopBits = UART_STOPBITS_1;
+	huart6_modem.Init.WordLength = UART_WORDLENGTH_8B;
+	huart6_modem.Init.Parity = UART_PARITY_NONE;
+	huart6_modem.Init.Mode = UART_MODE_TX_RX;
+	if(HAL_UART_Init(&huart6_modem) != HAL_OK) {
+		//TODO: Handle error
+		while(1);
+	}
+
+}
 
 
 
