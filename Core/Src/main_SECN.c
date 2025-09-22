@@ -44,7 +44,7 @@ void SystemClock_Config(void);
 extern  void SEGGER_UART_init(uint32_t);
 #endif
 
-
+TaskHandle_t	hSensor_task;
 
 
 int main(void) {
@@ -60,7 +60,15 @@ int main(void) {
 	qLoggerToCrypto = xQueueCreate(16, sizeof(logger_packet_t));
 	qCryptoToModem = xQueueCreate(16, sizeof(tx_payload_t));
 
+	if(xTaskCreate(sensor_task, "SENSOR", 512, NULL, 4, &hSensor_task) != pdPASS) LOGE("SENSOR task create failed");
+	if(xTaskCreate(logger_task, "LOGGER", 512, NULL, 4, &hSensor_task) != pdPASS) LOGE("LOGGER task create failed");
+	if(xTaskCreate(modem_task, "MODEM",   512, NULL, 5, &hSensor_task) != pdPASS) LOGE("MODEM task create failed");
+	if(xTaskCreate(crypto_task, "CRYPTO", 512, NULL, 3, &hSensor_task) != pdPASS) LOGE("CRYPTO task create failed");
 
+
+	xPortStartScheduler();
+	LOGE("Scheduler returned");
+	while(1){}
 
 
 }

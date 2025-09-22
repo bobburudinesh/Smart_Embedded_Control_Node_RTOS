@@ -53,7 +53,9 @@
 
 #define RINGBUF_SZ				(1024)
 
-#define LINEBUF_SZ				(256)
+#define LINEBUF_SZ				(128)
+
+#define LOGGER_PAYLOAD_SZ		(512)
 
 
 typedef enum {
@@ -77,13 +79,14 @@ typedef enum {
 	MSG_CRYPTO_ENCRYPTED,
 	MSG_SYSTEM_HEARTBEAT,
 
-	MSG_LIMIT_EXCEDDED = 65535
+	MSG_LIMIT_EXCEDDED = 255
 } msg_type_t;
 
 typedef struct {
 	uint32_t age_ms;
 	char line[LINEBUF_SZ];	//TODO: make dynamic length sensor buffer
-	uint16_t msg_type;
+	uint16_t len;
+	uint8_t sensor_id;
 } sensor_data_t;
 
 typedef struct {

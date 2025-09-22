@@ -17,7 +17,7 @@ void sensor_task(void *args) {
 	uart_async_init(&sensor_uart_async, &huart1_sensor);
 	if(!sensor_uart_async.uart_semaHandle) LOGE("sensor UART sem NULL");
 	uart_async_enable_irqs(&sensor_uart_async);
-	LOGI("Sensir UART async init OK");
+	LOGI("Sensor UART async init OK");
 	TickType_t currentTime = xTaskGetTickCount();
 	TickType_t next_sample_time = currentTime + pdMS_TO_TICKS(100);	// 100 ms
 	uint8_t line[256]; // scraping line for emptying space in ring buf
@@ -51,11 +51,13 @@ void sensor_task(void *args) {
 			bool new_since_last = have_last & (last_stable_line_ts > last_sent_ts);
 			uint32_t age = new_since_last ? (publish_ts - last_sent_ts) : 0xFFFFFFFFU;
 			sensor_data_t staged_line = {0};
-			staged_line.msg_type = MSG_SENSOR_SAMPLE;
+			staged_line.sensor_id = MSG_SENSOR_SAMPLE;
 			staged_line.age_ms = age;
 			if(new_since_last && age <= MAX_MESSAGE_AGE_MS) {
+				have_last = false;
 				strncpy(staged_line.line, (char*)last_stable_line, (sizeof(staged_line.line))-1);
 			    staged_line.line[sizeof(staged_line.line)-1] = '\0';
+			    staged_line.len = strlen(staged_line.line);
 			} else {
 				// LOG error packet
 				staged_line.line[0] = 0;
